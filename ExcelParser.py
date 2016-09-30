@@ -2,10 +2,44 @@ import xlrd
 import datetime
 
 
-book = xlrd.open_workbook('Firefox_MasterFile_4214Fall2016.xlsx')
+inputpath = input("Path: ")
+
+book = xlrd.open_workbook(inputpath)
 sheet = book.sheet_by_index(0)
 
-for x in range(10):
-    print("")
-    for y in range(10):
-        print(sheet.cell(x,y).value)
+rowCount = sheet.nrows
+colCount = 5 #sheet.ncols
+# 5 columns is specific to the supplied spreadsheet. row 17528 has 653 columns of what looks like "junk" data
+
+outputfile = open("malletInput.txt","w")
+delimiter = '\t'
+
+
+
+for headerCol in range(colCount):
+    
+    outputfile.write(sheet.cell(0, headerCol).value + delimiter)
+
+outputfile.write('\n')
+
+
+for row in range(1,rowCount):
+    
+    for column in range(colCount):
+
+        content = sheet.cell(row, column).value
+
+        # columns 3 & 4 are date columns specific to supplied spreadsheet
+        isDateCol = (column == 3 or column == 4)
+        isNotEmpty = (content != "" and content != "null" and content != None)
+
+        if (isDateCol and isNotEmpty):
+            
+            year, month, day, hour, minute, second = xlrd.xldate_as_tuple(content, book.datemode)
+            content = datetime.date(year, month, day)
+            
+        outputfile.write(str(content) + delimiter)
+
+    outputfile.write("\n")
+
+outputfile.close()
