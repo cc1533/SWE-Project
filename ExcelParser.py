@@ -2,13 +2,16 @@ import xlrd
 import datetime
 
 
-def excelParse():
-    
-    inputpath = input("Path: ")
+def excelParse(inputPath, outputPath):
 
-    book = xlrd.open_workbook(inputpath)
+    try:
+        book = xlrd.open_workbook(inputPath)
+
+    except FileNotFoundError:
+        return 0
+    
     sheet = book.sheet_by_index(0)
-    outputfile = open("malletInput.txt","w")
+    outputFile = open(outputPath, "w")
 
     rowCount = sheet.nrows
     colCount = 5 #sheet.ncols
@@ -18,11 +21,11 @@ def excelParse():
 
 
     for headerCol in range(colCount):
-        outputfile.write(sheet.cell(0, headerCol).value + delimiter)
+        outputFile.write(sheet.cell(0, headerCol).value + delimiter)
 
-    outputfile.write('\n')
+    outputFile.write('\n')
 
-    for row in range(1,rowCount):
+    for row in range(1, rowCount):
         
         for column in range(colCount):
 
@@ -37,11 +40,11 @@ def excelParse():
                 year, month, day, hour, minute, second = xlrd.xldate_as_tuple(content, book.datemode)
                 content = datetime.date(year, month, day)
                 
-            outputfile.write(str(content) + delimiter)
+            outputFile.write(str(content) + delimiter)
 
-        outputfile.write("\n")
+        outputFile.write("\n")
 
-    outputfile.close()
+    outputFile.close()
 
 
 class ExcelParser():
@@ -52,9 +55,9 @@ class ExcelParser():
         self.__filePath = ""
         self.__book = ""
 
-    def submitFile(self, filePath):
+    def submitFile(self, inputPath):
         
-        self.__filePath = filePath
+        self.__filePath = inputPath
 
         try:
             self.__book = xlrd.open_workbook(self.__filePath)
@@ -71,23 +74,23 @@ class ExcelParser():
             return 0
 
         sheet = self.__book.sheet_by_index(0)
-        columnContents = []
+        self.__comments = []
 
         rowCount = sheet.nrows
 
         for row in range(rowCount):
             content = sheet.cell(row, column).value
-            columnContents.append(content)
+            self.__comments.append(content)
 
-        return columnContents
+        return self.__comments
         
-    def createMalletFile(self):
+    def createMalletFile(self, outputPath):
 
         if (self.__book == ""):
             return 0
 
         sheet = self.__book.sheet_by_index(0)
-        outputfile = open("malletInput.txt","w")
+        outputFile = open(outputPath, "w")
 
         rowCount = sheet.nrows
         colCount = 5 #sheet.ncols
@@ -96,11 +99,11 @@ class ExcelParser():
 
 
         for headerCol in range(colCount):
-            outputfile.write(sheet.cell(0, headerCol).value + delimiter)
+            outputFile.write(sheet.cell(0, headerCol).value + delimiter)
 
-        outputfile.write('\n')
+        outputFile.write('\n')
 
-        for row in range(1,rowCount):
+        for row in range(1, rowCount):
             
             for column in range(colCount):
 
@@ -115,10 +118,17 @@ class ExcelParser():
                     year, month, day, hour, minute, second = xlrd.xldate_as_tuple(content, self.__book.datemode)
                     content = datetime.date(year, month, day)
                     
-                outputfile.write(str(content) + delimiter)
+                outputFile.write(str(content) + delimiter)
 
-            outputfile.write("\n")
+            outputFile.write("\n")
 
-        outputfile.close()
+        outputFile.close()
 
         return 1
+
+
+excelParse('Firefox_MasterFile_4214Fall2016.xlsx', 'malletInputFunctionFile.txt')
+
+test = ExcelParser()
+test.submitFile('Firefox_MasterFile_4214Fall2016.xlsx')
+test.createMalletFile('malletInputClassFile.txt')
