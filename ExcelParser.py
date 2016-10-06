@@ -101,7 +101,7 @@ class ExcelParser():
         for headerCol in range(colCount):
             outputFile.write(sheet.cell(0, headerCol).value + delimiter)
 
-        outputFile.write('\n')
+        #outputFile.write('\n')
 
         for row in range(1, rowCount):
             
@@ -120,15 +120,22 @@ class ExcelParser():
                     
                 outputFile.write(str(content) + delimiter)
 
-            outputFile.write("\n")
+            outputFile.write("  ")
 
         outputFile.close()
 
         return 1
 
 
-excelParse('Firefox_MasterFile_4214Fall2016.xlsx', 'malletInputFunctionFile.txt')
-
 test = ExcelParser()
 test.submitFile('Firefox_MasterFile_4214Fall2016.xlsx')
-test.createMalletFile('malletInputClassFile.txt')
+
+exampCol = test.parseColumn(1)
+
+file2 = open("testfile.txt","w")
+for line in exampCol:
+    file2.write(str(line))
+    if (line == 0):
+        file2.write(" X ")
+file2.close()
+
