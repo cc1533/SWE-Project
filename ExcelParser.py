@@ -79,7 +79,8 @@ class ExcelParser():
         rowCount = sheet.nrows
 
         for row in range(rowCount):
-            content = sheet.cell(row, column).value
+            content = str(sheet.cell(row, column).value)
+            content += " "
             self.__comments.append(content)
 
         return self.__comments
@@ -120,7 +121,7 @@ class ExcelParser():
                     
                 outputFile.write(str(content) + delimiter)
 
-            outputFile.write("  ")
+            #outputFile.write("  ")
 
         outputFile.close()
 
