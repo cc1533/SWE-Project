@@ -1,6 +1,11 @@
 import os
 from subprocess import call
 
+#import subprocess
+
+os.environ['MALLET_HOME'] = "C:\\mallet"
+
+
 # This script assumes it will be run from inside C:\mallet-2.0.7
 
 # Set the path to your mallet package (make sure to change the mallet version number, if necessary)
