@@ -150,6 +150,8 @@ class ExcelParser():
 
 
 test = ExcelParser()
+
+# The filepath will also be variable based on what the user imports
 test.submitFile('Firefox_MasterFile_4214Fall2016.xlsx')
 
 # User will have to specify the column of their title / descriptions Excel file when importing occurs
