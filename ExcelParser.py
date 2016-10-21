@@ -129,6 +129,9 @@ class ExcelParser():
                 content = sheet.cell(row, column).value
 
                 # columns 3 & 4 are date columns specific to supplied spreadsheet
+                
+                # Columnns 3 and 4 will become variable numbers, so that the user will have to manually
+                # select the columns with their start and end dates
                 isDateCol = (column == 3 or column == 4)
                 isNotEmpty = (content != "" and content != "null" and content != None)
 
@@ -149,6 +152,7 @@ class ExcelParser():
 test = ExcelParser()
 test.submitFile('Firefox_MasterFile_4214Fall2016.xlsx')
 
+# User will have to specify the column of their title / descriptions Excel file when importing occurs
 exampCol = test.parseColumn(1)
 
 file2 = open("testfile.txt","w")
