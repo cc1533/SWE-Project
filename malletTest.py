@@ -16,7 +16,7 @@ input_path = mallet_path + "\\inputdirectory"
 # Specify the number of topics you wish to obtain, and tbe number of iterations you wish to use
 # to obtain those topics. Store both values as string (keep the numbers in quotation marks, or use str() method below)
 # Caveat lector: Running 30000 iterations takes a few minutes...
-num_topics = "10"
+num_topics = "5"
 num_iterations = "20"
 
 # One could add additional parameters here (e.g. --optimize-interval could be helpful)
@@ -29,7 +29,7 @@ class Mallet(object):
     def import_dir(self):
         text_path = self.input_path 
         output = "readyforinput.mallet"
-        call(self.mallet_exec + " import-dir --input " + input_path + " --keep-sequence --output " + output , shell=True)
+        call(self.mallet_exec + " import-dir --input " + input_path + " --keep-sequence --remove-stopwords --extra-stopwords extrastop.txt --output " + output, shell=True)
     
     def train_topics(self):
         input_file = mallet_path + "\\readyforinput.mallet"
