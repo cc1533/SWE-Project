@@ -9,10 +9,6 @@
 #			Nathan Frank, Reid Montague, Titus Dillon
 #
 #####################################################################################################
-#	Other stuff here...
-#
-#
-#####################################################################################################
 #	Program info:
 #			- This program will parse the .xlsx to a plain text (.txt) file
 #
