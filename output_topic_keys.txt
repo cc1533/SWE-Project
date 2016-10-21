@@ -1,10 +1,5 @@
-0	0.5	tab window javascript bookmarks page text crash button link windows problem menu hangs work pages bar box high style default 
-1	0.5	page bookmarks tabs add window open crashes tab browser google menu button crash start search error history change bookmark text 
-2	0.5	tab search page window open menu button file crash bar restore icon browser toolbar error loading mail back data disabled 
-3	0.5	tab crashes window work location url open page file close bar field scrolling proxy folder box search lost live extension 
-4	0.5	page web browser work url tab crashes site window open image print bookmarks bookmark shortcut css set file error windows 
-5	0.5	dialog bookmark menu tabs page bar bookmarks text menus crash browsing mode mouse windows icons history scroll tab main error 
-6	0.5	page open toolbar bar text tabs tab update add minefield file bookmark bookmarks clicking windows working closing properly crash window 
-7	0.5	bookmarks page bar tab window history work open button tabs bookmark session display broken close mac address space error sites 
-8	0.5	bar browser tab page flash window screen bookmark list update search location display background pages mouse multiple error previous times 
-9	0.5	page load tab menu open toolbar browser work bar tabs site button drag items url images function click problem cursor 
+0	1	page bookmarks tabs work click window browser tab windows pages menu bookmark bar focus javascript show mac crashes default size 
+1	1	page toolbar crash open tabs menu text button work add load web flash closing search bar tab error window site 
+2	1	tab bar page open bookmarks window toolbar work button menu add text tabs url file pages error link bookmark displayed 
+3	1	tab page window search menu bookmark bar file browser open crash url work bookmarks crashes links error tabs web back 
+4	1	page tab bookmarks window open bar crashes text windows url browser opening tabs bookmark close search button toolbar site start 
