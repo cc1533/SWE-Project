@@ -8,8 +8,11 @@
 # 			Nathan Frank, Reid Montague, Titus Dillon
 #
 #####################################################################################################
-# 	Other stuff here...
-#
+#  TODO:
+#       1.  Add Call Mallet button functionality
+#       2.  Test to make sure it runs and works correctly on Windows
+#       3.  Figure out how to get the graphing stuff to work?
+#       4.  MINOR:  Get rid of global variables
 #
 #####################################################################################################
 # 	Program info:
@@ -21,15 +24,17 @@
 # README!
 # If you need help writing code for Gtk, please watch this playlist:  https://www.youtube.com/playlist?list=PL6gx4Cwl9DGBBnHFDEANbv9q8T4CONGZE
 # This is the online documentation for Gtk:  https://python-gtk-3-tutorial.readthedocs.io/en/latest/install.html
-# Download:  https://wiki.gnome.org/action/show/Projects/PyGObject
+# Download PyGObject from:  https://wiki.gnome.org/action/show/Projects/PyGObject
 
+# Imports here
 import gi
 from subprocess import call
-
-gi.require_version('Gtk', '3.0')
+gi.require_version('Gtk', '3.0')    # This is here because this program requires Gtk 3.0 or higher
 from gi.repository import Gtk
 
 # Create mallet and excel location string variables
+# I couldn't figure out how to get these to work without being globals
+# I'd much rather prefer that they be local variables instead
 malletLoc = ""
 excelLoc = ""
 
