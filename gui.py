@@ -28,6 +28,10 @@ import gi
 gi.require_version('Gtk', '3.0')
 from gi.repository import Gtk
 
+# Create mallet and excel location string variables
+malletLoc = ""
+excelLoc = ""
+
 
 class GUI(Gtk.Window):
     def __init__(self):
@@ -75,8 +79,14 @@ class GUI(Gtk.Window):
         self.callParser.connect("clicked", self.callParser_clicked)
         vbox.pack_start(self.callParser, True, True, 0)
 
+        # Button that calls Mallet
+        self.callMallet = Gtk.Button(label="Call Mallet")
+        self.callMallet.connect("clicked", self.callMallet_clicked)
+        vbox.pack_start(self.callMallet, True, True, 0)
+
     # What happens when the getMal button is clicked by the user...
     def getMal_clicked(self, widget):
+        global malletLoc
 
         # Create a window that allows a user to choose a file
         dialog = Gtk.FileChooserDialog("Mallet Location", self, Gtk.FileChooserAction.OPEN,
@@ -110,6 +120,7 @@ class GUI(Gtk.Window):
 
     # This is what happens when the getXL button is clicked by the user
     def getXL_clicked(self, widget):
+        global excelLoc
 
         dialog = Gtk.FileChooserDialog("Excel File Location", self, Gtk.FileChooserAction.OPEN,
                                        ("Submit", Gtk.ResponseType.OK,
@@ -134,7 +145,12 @@ class GUI(Gtk.Window):
             dialog.destroy()
 
     def callParser_clicked(self, widget):
-        print("Submitting excel file to parser")
+        global excelLoc
+        print("Submitting " + excelLoc + " to ExcelParser.py")
+
+    def callMallet_clicked(self, widget):
+        global malletLoc
+        print("Submitting file to " + malletLoc)
 
 
 win = GUI()
