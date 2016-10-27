@@ -111,7 +111,7 @@ class ExcelParser():
 
         for row in range(1, rowCount): #skips the heading
             
-            content = str(sheet.cell(row, column).value)
+            content = str(sheet.cell(int(row), int(column)).value)
             content += " "
             self.__comments.append(content)
 
@@ -173,14 +173,14 @@ class ExcelParser():
 
         return 1
 
-
+'''
 excelInputPath = 'Firefox_MasterFile_4214Fall2016.xlsx'
 colOutputPath = 'inputdirectory\\TOPICINPUT.txt'
 colToParse = 1
 ETOutputPath = 'EXCEL.txt'
 dateCols = [3,4]
-
-#excelInputPath, colOutputPath, colToParse, ETOutputPath, dateCols = getCommandInputs()
+'''
+excelInputPath, colOutputPath, colToParse, ETOutputPath, dateCols = getCommandInputs()
 
 
 test = ExcelParser()
