@@ -24,6 +24,7 @@
 # Download:  https://wiki.gnome.org/action/show/Projects/PyGObject
 
 import gi
+from subprocess import call
 
 gi.require_version('Gtk', '3.0')
 from gi.repository import Gtk
@@ -147,13 +148,20 @@ class GUI(Gtk.Window):
     def callParser_clicked(self, widget):
         global excelLoc
         print("Submitting " + excelLoc + " to ExcelParser.py")
+        # It's hard to tell whether or not this works... I'm pretty sure this call is correct but does ExcelParser.py work with this kind of argument passing?
+        call(["python3.5", "ExcelParser.py", excelLoc])
 
     def callMallet_clicked(self, widget):
         global malletLoc
         print("Submitting file to " + malletLoc)
+        # I forgot the command to run mallet... Like I have no idea what-so-ever
 
 
+# creates the initial class
 win = GUI()
+# This makes the 'x' button at the top of the page terminate the program
 win.connect("delete-event", Gtk.main_quit)
+# Shows all the objects in the window
 win.show_all()
+# This is basically the "loop" that makes the GUI continually run until termination
 Gtk.main()
