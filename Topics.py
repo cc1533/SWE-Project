@@ -29,29 +29,36 @@ class EnhancementTopic:
 
     def __init__(self):
         self.__wordList = []
-        self.__dateCount = {}
+        self.__dateCounts = {}
 
     def setWords(self, wordList):
-        return None
+        self.__wordList = wordList
 
     def incDateCount(self, date):
-        return None
+        if self.__dateCounts[date]:
+            self.__dateCounts[date] += 1
+        else:
+            self.__dateCounts[date] = 1
 
     def getDateCount(self, date):
-        return None
+        return self.__dateCounts[date]
 
 
 class BugTopic:
 
     def __init__(self):
-        self.__bugMap = {}
-        self.__severityMap = {}
+        self.__bugDateCounts = {}
+        self.__severityWordLists = {}
 
-    def incDateCount(self, date, severity):
-        return None
+    def setWords(self, severity, wordList):
+        self.__severityWordLists[severity] = wordList
+        self.__bugDateCounts[severity] = {}
 
-    def getDateCount(self, date, severity):
-        return None
+    def incDateCount(self, severity, date):
+        if self.__bugDateCounts[severity][date]:
+            self.__bugDateCounts[severity][date] += 1
+        else:
+            self.__bugDateCounts[severity][date] = 1
 
-    def setWords(self, wordList, severity):
-        return None
+    def getDateCount(self, severity, date):
+        return self.__bugDateCounts[severity][date]
