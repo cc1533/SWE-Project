@@ -1,4 +1,4 @@
-'''
+"""
 #####################################################################################################
 #	CSE 4214, Intro to Software Engineering, Fall 2016
 #	Lab Section 2, Group 3, Next Top Model
@@ -22,7 +22,7 @@
 #
 #####################################################################################################
 #!/usr/bin/python
-'''
+"""
 
 
 class EnhancementTopic:
@@ -43,6 +43,9 @@ class EnhancementTopic:
     def getDateCount(self, date):
         return self.__dateCounts[date]
 
+    def getDatesAndCounts(self, ):
+        return self.__dateCounts
+
 
 class BugTopic:
 
@@ -62,3 +65,6 @@ class BugTopic:
 
     def getDateCount(self, severity, date):
         return self.__bugDateCounts[severity][date]
+
+    def getDatesAndCounts(self, severity):
+        return self.__bugDateCounts[severity].keys()
