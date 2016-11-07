@@ -17,7 +17,7 @@
 #####################################################################################################
 #   TODO:
 #       Fill in functions
-#
+#       Translate sevNum into user-friendly string
 #
 #
 #####################################################################################################
@@ -35,10 +35,26 @@ class VisualModeler:
         # just a placeholder atm
         self.__name = "Visual Modeling Class"
 
-    def modelVolumeEnhView(self, enhTopics):
-        return None
+    @staticmethod
+    def modelVolumeEnhView(enhTopics):
+        counts = []
+        topics = []
+        topicNum = 0
+        for topic in enhTopics:
+            countSum = 0
+            datesAndCounts = topic.getDatesAndCounts()
+            for key, value in datesAndCounts:
+                countSum += value
+            topics.append(topicNum)
+            counts.append(countSum)
 
-    def modelDateView(self, enhTopic):
+        dF = DataFrame(data={'topics': topics, 'counts': counts})
+
+        plot = ggplot(dF, aes(x='topics', weight='counts')) + geom_bar()
+        return plot
+
+    @staticmethod
+    def modelDateView(enhTopic):
         datesAndCounts = enhTopic.getDatesAndCounts()
         dates = []
         counts = []
@@ -51,11 +67,31 @@ class VisualModeler:
         plot = ggplot(dF, aes(x='dates', y='reports')) + geom_line()
         return plot
 
-    def modelVolumeBugView(self, bugTopics):
+    @staticmethod
+    def modelVolumeBugView(bugTopics):
         return None
 
-    def modelMultiDateView(self, bugTopic):
-        return None
+    @staticmethod
+    def modelMultiDateView(bugTopic):
+        severityDatesAndCounts = bugTopic.getDatesAndCounts()
 
-    def modelDividedView(self, bugTopic):
+        sevs = []
+        dates = []
+        counts = []
+
+        sevNum = 0
+        for severity in severityDatesAndCounts:
+            for key, value in severityDatesAndCounts[severity]:
+                dates.append(key)
+                counts.append(value)
+                sevs.append(str(sevNum))
+            sevNum += 1
+
+        formattedDates = to_datetime(Series(dates))
+        dF = DataFrame(data={'dates': formattedDates, 'reports': counts, 'severity': sevs})
+        plot = ggplot(dF, aes(x='dates', y='reports', color='severity')) + geom_line()
+        return plot
+
+    @staticmethod
+    def modelDividedView(bugTopic):
         return None
