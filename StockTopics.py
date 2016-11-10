@@ -25,148 +25,159 @@ import Topics
 from sys import argv
 
 
-def initializeTopics(quantity):
+class TopicStocker():
 
-    enhancementTopics = []
-    bugTopics = []
+    def __init__(self):
 
-    for i in range(quantity):
-        enhancementTopics.append(Topics.EnhancementTopic())
-        bugTopics.append(Topics.BugTopic())
+        # list containing an enhancement topic object for each topic
+        self.__enhTopics = []
+        # list containing a bug topic object for each topic
+        self.__bugTopics = []
+        # 2D list containing lists for each enhancement topic's word list
+        self.__enhWords = []
+        # 3D list containing lists for each bug topic's severity's word list
+        # 0:trivial, 1:minor, 2:normal, 3:major, 4:critical, 5:blocker
+        self.__bugWords = []
 
-    return enhancementTopics, bugTopics
+        self.__numTopics = 0
 
-def getNumberOfTopics():
-    return int(argv[1])
-
-
-# keys - file with keywords & mallet topics
-# linedKeys - file with keywords in lines & order from excel doc
-# datesTypes - excel text file; has dates and types
-
-keyFile = open("output_state", "r")
-linedKeyFile = open("FILTERED.txt", "r")
-dateTypeFile = open("EXCEL.txt", "r")
-
-keys = keyFile.readlines()
-linedKeys = linedKeyFile.readlines()
-datesTypes = dateTypeFile.readlines()
-
-keyFile.close()
-linedKeyFile.close()
-dateTypeFile.close()
-
-
-# keyline - line index of output_state file
-#lineKeyIndex - line index of FILTERED.txt file
-# dateTypeLine - line index of EXCEL.txt file
-# keyIndex - number of keys seen (comparable with index of same word in FILTERED.txt)
-# keyIndexMax - number of words in line from FILTERED.txt file
-
-keyline = 3
-lineKeyIndex = 0
-dateTypeLine = 1
-keyIndex = 0
-keyIndexMax = 0
-
-
-# enhTopics: list containing an enhancement topic object for each topic
-# bugTopics: list containing a bug topic object for each topic
-# enhWords: 2D list containing lists for each enhancement topic's word list
-# bugWords: 3D list containing lists for each bug topic's severity's word list
-#            - each list contains 6 lists; one for each severity
-#               - 0 - TRIVIAL
-#               - 1 - MINOR
-#               - 2 - NORMAL
-#               - 3 - MAJOR
-#               - 4 - CRITICAL
-#               - 5 - BLOCKER
-
-numberOfTopics = getNumberOfTopics()
-enhTopics, bugTopics = initializeTopics(numberOfTopics)
-
-enhWords = [[] for x in range(numberOfTopics)]
-bugWords = [[[] for x in range(6)] for x in range(numberOfTopics)]
-
-
-keyIndexMax += len(linedKeys[lineKeyIndex].split())
-
-while (keyline < len(keys)):
-
-    while (keyIndex >= keyIndexMax - 1):
-        lineKeyIndex += 1
-        keyIndexMax += len(linedKeys[lineKeyIndex].split())
-        dateTypeLine += 1
-
-    keyword = keys[keyline].split()[4]
-
-    # this is here becasue of some foreign characters found in the mallet output that are sometimes split
-    # into 2 separate indices. the except puts these 2 indeces together
-    try:
-        topic = int(keys[keyline].split()[5])
-    except:
-        #print("["+ str(keys[keyline].split()) + "] line: " + str(keyline) + " exline: " + str(dateTypeLine))
-        #quit()
+    def getEnhTopics(self):
         
-        keyword = keys[keyline].split()[4] + keys[keyline].split()[5]
-        topic = int(keys[keyline].split()[6])
+        return self.__enhTopics
 
-    date = datesTypes[dateTypeLine].split('\t')[3]
-    category = datesTypes[dateTypeLine].split('\t')[2]
-    
-    if (category == "enhancement"):
-        enhTopics[topic].incDateCount(date)
-        if (keyword not in enhWords[topic]):
-            enhWords[topic].append(keyword)
+    def getBugTopics(self):
+        
+        return self.__bugTopics
 
-    else:
-        bugTopics[topic].incDateCount(category, date)
+    def initializeTopics(self, numOfTopics):
 
-        if (category == "trivial"):
-            if (keyword not in bugWords[topic][0]):
-                bugWords[topic][0].append(keyword)
+        self.__numTopics = numOfTopics
+        
+        for i in range(self.__numTopics):
+            self.__enhTopics.append(Topics.EnhancementTopic())
+            self.__bugTopics.append(Topics.BugTopic())
+
+        self.__enhWords = [[] for x in range(self.__numTopics)]
+        self.__bugWords = [[[] for x in range(6)] for x in range(self.__numTopics)]
+
+    def stockTopics(self):
+
+        # file with keywords & mallet topics
+        with open("output_state", "r") as keyFile:
+            keys = keyFile.readlines()
+            
+        # file with keywords in lines & order from excel doc
+        with open("FILTERED.txt", "r") as linedKeyFile:
+            linedKeys = linedKeyFile.readlines()
+            
+        # file with excel text table (has dates & types)
+        with open("EXCEL.txt", "r") as dateTypeFile:
+            datesTypes = dateTypeFile.readlines()
+
+
+        # line index of output_state file
+        keyline = 3
+        # line index of FILTERED.txt file
+        lineKeyIndex = 0
+        # line index of EXCEL.txt file
+        dateTypeLine = 1
+        # number of keys seen (comparable with index of same word in FILTERED.txt)
+        keyIndex = 0
+        # number of words in line from FILTERED.txt file
+        keyIndexMax = 0
+
+
+        # this section adds & increments the dates for each topic object
+        # it also stocks each topics wordlist for later assignment
+        keyIndexMax += len(linedKeys[lineKeyIndex].split())
+
+        while (keyline < len(keys)):
+            
+            while (keyIndex >= keyIndexMax - 1):
+                lineKeyIndex += 1
+                keyIndexMax += len(linedKeys[lineKeyIndex].split())
+                dateTypeLine += 1
+
+            keyword = keys[keyline].split()[4]
+
+            # this is here becasue of some foreign characters found in the mallet output that are sometimes split
+            # into 2 separate indices. the except puts these 2 indeces together
+            try:
+                topic = int(keys[keyline].split()[5])
+            except:
+                #this was just to see what the line looked like
+                #print("["+ str(keys[keyline].split()) + "] line: " + str(keyline) + " exline: " + str(dateTypeLine))
+                #quit()
                 
-        elif (category == "minor"):
-            if (keyword not in bugWords[topic][1]):
-                bugWords[topic][1].append(keyword)
-                
-        elif (category == "normal"):
-            if (keyword not in bugWords[topic][2]):
-                bugWords[topic][2].append(keyword)
-                
-        elif (category == "major"):
-            if (keyword not in bugWords[topic][3]):
-                bugWords[topic][3].append(keyword)
-                
-        elif (category == "critical"):
-            if (keyword not in bugWords[topic][4]):
-                bugWords[topic][4].append(keyword)
-                
-        elif (category == "blocker"):
-            if (keyword not in bugWords[topic][5]):
-                bugWords[topic][5].append(keyword)
+                keyword = keys[keyline].split()[4] + keys[keyline].split()[5]
+                topic = int(keys[keyline].split()[6])
 
-    keyIndex += 1
-    keyline += 1
+            date = datesTypes[dateTypeLine].split('\t')[3]
+            category = datesTypes[dateTypeLine].split('\t')[2]
+            
+            if (category == "enhancement"):
+                self.__enhTopics[topic].incDateCount(date)
+                if (keyword not in self.__enhWords[topic]):
+                    self.__enhWords[topic].append(keyword)
+
+            else:
+                self.__bugTopics[topic].incDateCount(category, date)
+
+                if (category == "trivial"):
+                    if (keyword not in self.__bugWords[topic][0]):
+                        self.__bugWords[topic][0].append(keyword)
+                        
+                elif (category == "minor"):
+                    if (keyword not in self.__bugWords[topic][1]):
+                        self.__bugWords[topic][1].append(keyword)
+                        
+                elif (category == "normal"):
+                    if (keyword not in self.__bugWords[topic][2]):
+                        self.__bugWords[topic][2].append(keyword)
+                        
+                elif (category == "major"):
+                    if (keyword not in self.__bugWords[topic][3]):
+                        self.__bugWords[topic][3].append(keyword)
+                        
+                elif (category == "critical"):
+                    if (keyword not in self.__bugWords[topic][4]):
+                        self.__bugWords[topic][4].append(keyword)
+                        
+                elif (category == "blocker"):
+                    if (keyword not in self.__bugWords[topic][5]):
+                        self.__bugWords[topic][5].append(keyword)
+
+            keyIndex += 1
+            keyline += 1
 
 
-topic = 0
-sev = 0
-severity = ["trivial", "minor", "normal", "major", "critical", "blocker"]
-while (topic < numberOfTopics):
-    enhTopics[topic].setWords(enhWords[topic])
-    topic += 1
+        # this section sets the wordlist for each topic/severity etc...
+        topic = 0
+        severity = ["trivial", "minor", "normal", "major", "critical", "blocker"]
+        while (topic < self.__numTopics):
+            self.__enhTopics[topic].setWords(self.__enhWords[topic])
+            topic += 1
 
-topic = 0
-while (topic < numberOfTopics):
-    sev = 0
-    while (sev < len(bugWords[topic])):
-        bugTopics[topic].setWords( severity[sev], bugWords[topic][sev] )
-        sev += 1
-    topic += 1
+        topic = 0
+        sev = 0
+        while (topic < self.__numTopics):
+            sev = 0
+            while (sev < len(self.__bugWords[topic])):
+                self.__bugTopics[topic].setWords(severity[sev], self.__bugWords[topic][sev])
+                sev += 1
+            topic += 1
+
+
+numOfTopics = int(argv[1])
+stockTopics = TopicStocker()
+stockTopics.initializeTopics(numOfTopics)
+stockTopics.stockTopics()
       
 # TEST
 """
+enhTopics = stockTopics.getEnhTopics()
+bugTopics = stockTopics.getBugTopics()
+
 i = 0
 for topic in enhTopics:
     print("EnhTopic " + str(i) + " 2003-09-22 date count: " + str(topic.getDateCount("2003-09-22")))
