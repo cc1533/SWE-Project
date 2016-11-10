@@ -11,29 +11,17 @@
 #####################################################################################################
 #	Program info:
 #			This program will:
-#                       - parse the .xlsx to a plain text (.txt) file
-#                       - parse a specified column to a plain text (.txt) file
+#                          - parse the .xlsx to a plain text (.txt) file
+#                          - parse a specified column to a plain text (.txt) file
 #
 #####################################################################################################
 #!/usr/bin/python
 '''
 
 
-#-------------------------------------------------
-#
-# retrieval from passed in GUI inputs
-#
-#-------------------------------------------------
-#
-# input values retrieved from the user via the GUI may be passed in via this function
-#
-# stockInputs(ExcelDocument, ParsedColumnOutputFilename, ColumnToBeParsed, ExcelTextOutputFilename, ExcelDateColumns)
-#
-#-------------------------------------------------
-
-def stockInputs():
-    return
-
+import xlrd
+import datetime
+from sys import argv
 
 #-------------------------------------------------
 #
@@ -55,8 +43,6 @@ def stockInputs():
 # Sample Command: python ExcelParser.py Firefox_MasterFile_4214Fall2016.xlsx TOPICINPUT.txt 1 EXCEL.txt "3 4"
 #
 #-------------------------------------------------
-from sys import argv
-
 def getCommandInputs():
     
     argList = argv
@@ -64,17 +50,13 @@ def getCommandInputs():
     excelInputPath = argList[1]
 
     colOutputPath = argList[2]
-    colToParse = argList[3]
+    colToParse = int(argList[3])
 
     ETOutputPath = argList[4]
     dateCols = argList[5].split()
 
     return excelInputPath, colOutputPath, colToParse, ETOutputPath, dateCols
 #-------------------------------------------------
-
-
-import xlrd
-import datetime
 
 
 class ExcelParser():
@@ -111,23 +93,24 @@ class ExcelParser():
 
         for row in range(1, rowCount): #skips the heading
             
-            content = str(sheet.cell(int(row), int(column)).value)
+            content = str(sheet.cell(row, column).value)
             content += " "
             self.__comments.append(content)
 
         
-        outputfile2 = outputfile.replace(".txt", ".lined")
+        linedOutputfile = outputfile.replace(".txt", ".lined")
         
         # writes the contents of the column to file for mallet topic training
-        file = open(outputfile, "w")
-        file2 = open(outputfile2, "w")
+        # also writes column contents to separate file in lined format
+        malletinput = open(outputfile, "w")
+        linedcolumn = open(linedOutputfile, "w")
         
         for line in self.__comments:
-            file.write(str(line))
-            file2.write(str(line) + '\n')
+            malletinput.write(str(line))
+            linedcolumn.write(str(line) + '\n')
                
-        file.close()
-        file2.close()
+        malletinput.close()
+        linedcolumn.close()
 
         return 1
         
@@ -149,7 +132,7 @@ class ExcelParser():
         for headerCol in range(colCount):
             outputFile.write(sheet.cell(0, headerCol).value + delimiter)
 
-        #outputFile.write('\n') #creates table
+        outputFile.write('\n') #creates table
 
         for row in range(1, rowCount):
             
@@ -157,7 +140,7 @@ class ExcelParser():
 
                 content = sheet.cell(row, column).value
 
-                isDateCol = column in self.__dateColumns
+                isDateCol = str(column) in self.__dateColumns
                 isNotEmpty = (content != "" and content != "null" and content != None)
 
                 if (isDateCol and isNotEmpty):
@@ -167,21 +150,13 @@ class ExcelParser():
                     
                 outputFile.write(str(content) + delimiter)
 
-            #outputFile.write("\n") #creates table
+            outputFile.write("\n") #creates table
 
         outputFile.close()
-
         return 1
 
-'''
-excelInputPath = 'Firefox_MasterFile_4214Fall2016.xlsx'
-colOutputPath = 'inputdirectory\\TOPICINPUT.txt'
-colToParse = 1
-ETOutputPath = 'EXCEL.txt'
-dateCols = [3,4]
-'''
-excelInputPath, colOutputPath, colToParse, ETOutputPath, dateCols = getCommandInputs()
 
+excelInputPath, colOutputPath, colToParse, ETOutputPath, dateCols = getCommandInputs()
 
 test = ExcelParser()
 test.submitFile(excelInputPath)
