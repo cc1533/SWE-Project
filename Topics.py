@@ -35,15 +35,18 @@ class EnhancementTopic:
         self.__wordList = wordList
 
     def incDateCount(self, date):
-        if self.__dateCounts[date]:
+        if (date in self.__dateCounts):
             self.__dateCounts[date] += 1
         else:
             self.__dateCounts[date] = 1
 
     def getDateCount(self, date):
-        return self.__dateCounts[date]
+        if (date in self.__dateCounts):
+            return self.__dateCounts[date]
+        else:
+            return 0
 
-    def getDatesAndCounts(self, ):
+    def getDatesAndCounts(self):
         return self.__dateCounts
 
 
@@ -55,16 +58,22 @@ class BugTopic:
 
     def setWords(self, severity, wordList):
         self.__severityWordLists[severity] = wordList
-        self.__bugDateCounts[severity] = {}
 
     def incDateCount(self, severity, date):
-        if self.__bugDateCounts[severity][date]:
-            self.__bugDateCounts[severity][date] += 1
+        if (severity in self.__bugDateCounts):
+            if (date in self.__bugDateCounts[severity]):
+                self.__bugDateCounts[severity][date] += 1
+            else:
+                self.__bugDateCounts[severity][date] = 1
         else:
+            self.__bugDateCounts[severity] = {}
             self.__bugDateCounts[severity][date] = 1
 
     def getDateCount(self, severity, date):
-        return self.__bugDateCounts[severity][date]
+        if (date in self.__bugDateCounts[severity]):
+            return self.__bugDateCounts[severity][date]
+        else:
+            return 0
 
     def getDatesAndCounts(self, severity):
         return self.__bugDateCounts[severity].keys()
