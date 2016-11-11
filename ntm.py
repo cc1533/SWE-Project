@@ -10,15 +10,16 @@
 #####################################################################################################
 #  TODO:
 #       1.  Add full button functionality
-#           - Call Mallet button
-#           - Check boxes
-#           - *add a new* display model button
-#           - # of topics to display widget (spin box?)
+#           - Call Mallet button needs to call mallet
+#           - Check boxes functionality
+#           - *add a new* display model button, basically call the VisualModeler?
+#           - # of topics to display widget (spin box?), sends arguments to MalletCaller and TopicStocker
 #       2.  Test to make sure it runs and works correctly on Windows
 #           - Make sure that everything that uses paths can work on Windows and Linux
 #       3.  Figure out how to get the model stuff to be displayed?
 #           - Just open them in any image viewer?
 #           - Create image widget in the GUI and display it there?
+#           - Interactive ggplot window displayed?
 #       4.  Make sure all calls to external modules work
 #
 #####################################################################################################
@@ -83,6 +84,13 @@ class Form(QWidget):
         self.numTopicBox.setToolTip("Number of topics to be displayed (10 by default).")
         self.numTopicBox.setValue(10)
 
+        # Looking for some widget to use to change model types
+        self.graphTypeBox = QComboBox()
+        graphTypeList = ['Line', 'Bar', 'Pie']
+        self.graphTypeBox.insertItems(0, graphTypeList)
+        self.graphTypeBox.setToolTip("Choose what kind of graph the data should be displayed as.")
+
+
         # Create layout boxes (makes things line up nicely)
         vBox1 = QVBoxLayout()
         hBox1 = QHBoxLayout()
@@ -108,6 +116,7 @@ class Form(QWidget):
         hBox3.addWidget(self.bugCheck)
         vBox1.addLayout(hBox3)
         vBox1.addWidget(self.numTopicBox)
+        vBox1.addWidget(self.graphTypeBox)
 
         mainLayout = QGridLayout()
         # mainLayout.addWidget(nameLabel, 0, 0)
@@ -128,6 +137,8 @@ class Form(QWidget):
             QMessageBox.information(self, "Error", "Please enter the Mallet Program.")
         else:
             QMessageBox.information(self, "Mallet Called", "Please wait as Mallet processes your input file.")
+            call(["python3.5", "MalletCaller.py", 3])
+            call(["python3.5", "TopicStocker.py", 3])
             return
     
     def callParseButton(self):
@@ -142,8 +153,8 @@ class Form(QWidget):
         else:
             QMessageBox.information(self, "Valid Input File",
                                     "Parsing %s for Mallet" % inputFile)
-            # I think this call needs to be simplified:  reduce "malletInputFile.txt" and chance "EXCEL.txt"
-            # call(["python3.5", "ExcelParser.py", inputFile, "malletInputFile.txt", "1", "EXCEL.txt", "3 4"])
+            exec1 = "python3.5 ExcelParser.py " + inputFile + ' 1 "3 4"'
+            call(exec1)
             return
 
     def fileSearch(self):
