@@ -137,8 +137,8 @@ class Form(QWidget):
             QMessageBox.information(self, "Error", "Please enter the Mallet Program.")
         else:
             QMessageBox.information(self, "Mallet Called", "Please wait as Mallet processes your input file.")
-            call(["python3.5", "MalletCaller.py", 3])
-            call(["python3.5", "TopicStocker.py", 3])
+            call(["python", "MalletCaller.py", 3])
+            call(["python", "TopicStocker.py", 3])
             return
     
     def callParseButton(self):
@@ -153,7 +153,8 @@ class Form(QWidget):
         else:
             QMessageBox.information(self, "Valid Input File",
                                     "Parsing %s for Mallet" % inputFile)
-            call(['python3.5 ExcelParser.py ' + inputFile + ' 1 "3 4"'], shell=True)
+            print(inputFile)
+            call(['python ExcelParser.py ' + inputFile + ' 1 "3 4"'], shell=True)
             return
 
     def fileSearch(self):
