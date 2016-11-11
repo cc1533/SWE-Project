@@ -122,33 +122,28 @@ class Form(QWidget):
         # mainLayout.addWidget(nameLabel, 0, 0)
         mainLayout.addLayout(vBox1, 0, 1)
         #mainLayout.addLayout(hLayout, 0, 1)
-
+ 
         self.setLayout(mainLayout)
         self.setWindowTitle("Next Top Model")
-
-
+ 
     def callMalletButton(self):
         name = self.malletLine.text()
-
+ 
         if name == "":
             QMessageBox.information(self, "Error",
                                     "Please enter the Mallet Program.")
             return
-        
         elif "mallet" not in name:
             QMessageBox.information(self, "Error", "Please enter the Mallet Program.")
         else:
-   
             QMessageBox.information(self, "Mallet Called", "Please wait as Mallet processes your input file.")
-            ## 3 is the number of topics; however, it should be a variable and should be specified through the GUI application by the user
-            call("mallet_call.py 3")
+            call(["python3.5", "MalletCaller.py", 3])
+            call(["python3.5", "TopicStocker.py", 3])
             return
-
-
-
+    
     def callParseButton(self):
         inputFile = self.inputLine.text()
-
+ 
         if inputFile == "":
             QMessageBox.information(self, "Error",
                                     "Please enter the Input file.")
@@ -158,8 +153,7 @@ class Form(QWidget):
         else:
             QMessageBox.information(self, "Valid Input File",
                                     "Parsing %s for Mallet" % inputFile)
-            exec1 = "python3.5 ExcelParser.py " + inputFile + ' 1 "3 4"'
-            call(exec1)
+            call(['python3.5 ExcelParser.py ' + inputFile + ' 1 "3 4"'], shell=True)
             return
 
     def fileSearch(self):
@@ -201,10 +195,10 @@ class Form(QWidget):
 
 if __name__ == '__main__':
     import sys
-
+ 
     app = QApplication(sys.argv)
-
+ 
     screen = Form()
     screen.show()
-
-    sys.exit(app.exec_())
+ 
+    sys.exit(app.exec_()) 
