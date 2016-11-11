@@ -127,7 +127,6 @@ class Form(QWidget):
         self.setWindowTitle("Next Top Model")
 
 
-
     def callMalletButton(self):
         name = self.malletLine.text()
 
@@ -135,10 +134,13 @@ class Form(QWidget):
             QMessageBox.information(self, "Error",
                                     "Please enter the Mallet Program.")
             return
+        
         elif "mallet" not in name:
             QMessageBox.information(self, "Error", "Please enter the Mallet Program.")
         else:
+   
             QMessageBox.information(self, "Mallet Called", "Please wait as Mallet processes your input file.")
+            ## 3 is the number of topics; however, it should be a variable and should be specified through the GUI application by the user
             call("mallet_call.py 3")
             return
 
