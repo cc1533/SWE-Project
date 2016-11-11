@@ -122,13 +122,15 @@ class Form(QWidget):
         # mainLayout.addWidget(nameLabel, 0, 0)
         mainLayout.addLayout(vBox1, 0, 1)
         #mainLayout.addLayout(hLayout, 0, 1)
- 
+
         self.setLayout(mainLayout)
         self.setWindowTitle("Next Top Model")
- 
+
+
+
     def callMalletButton(self):
         name = self.malletLine.text()
- 
+
         if name == "":
             QMessageBox.information(self, "Error",
                                     "Please enter the Mallet Program.")
@@ -137,13 +139,14 @@ class Form(QWidget):
             QMessageBox.information(self, "Error", "Please enter the Mallet Program.")
         else:
             QMessageBox.information(self, "Mallet Called", "Please wait as Mallet processes your input file.")
-            call(["python3.5", "MalletCaller.py", 3])
-            call(["python3.5", "TopicStocker.py", 3])
+            call("mallet_call.py 3")
             return
-    
+
+
+
     def callParseButton(self):
         inputFile = self.inputLine.text()
- 
+
         if inputFile == "":
             QMessageBox.information(self, "Error",
                                     "Please enter the Input file.")
@@ -196,10 +199,10 @@ class Form(QWidget):
 
 if __name__ == '__main__':
     import sys
- 
+
     app = QApplication(sys.argv)
- 
+
     screen = Form()
     screen.show()
- 
-    sys.exit(app.exec_()) 
+
+    sys.exit(app.exec_())
