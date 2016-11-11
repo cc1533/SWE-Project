@@ -32,30 +32,24 @@ from sys import argv
 # Index Key:
 #       0 - Python File Name
 #       1 - Excel Input File
-#       2 - Parsed Column Output File Name (including file extension) 
-#       3 - Column to be Parsed
-#       4 - Text Excel File Name [OPTIONAL] (will have a default)
-#       5 - Excel Date Columns [OPTIONAL]
+#       2 - Column to be Parsed
+#       3 - Excel Date Columns
 #
-# Command Format: python ExcelParser.py [ExcelDocument] [ParsedColumnOutput] [ColumnNumber] [ExcelTextOuput] ["DateColumns"]
+# Command Format: python ExcelParser.py [ExcelDocument] [ColumnNumber] ["DateColumns"]
 #       - without brackets
 #
-# Sample Command: python ExcelParser.py Firefox_MasterFile_4214Fall2016.xlsx TOPICINPUT.txt 1 EXCEL.txt "3 4"
+# Sample Command: python ExcelParser.py Firefox_MasterFile_4214Fall2016.xlsx 1 "3 4"
 #
 #-------------------------------------------------
 def getCommandInputs():
-    
+
     argList = argv
 
     excelInputPath = argList[1]
+    colToParse = int(argList[2])
+    dateCols = argList[3].split()
 
-    colOutputPath = argList[2]
-    colToParse = int(argList[3])
-
-    ETOutputPath = argList[4]
-    dateCols = argList[5].split()
-
-    return excelInputPath, colOutputPath, colToParse, ETOutputPath, dateCols
+    return excelInputPath, colToParse, dateCols
 #-------------------------------------------------
 
 
@@ -81,7 +75,7 @@ class ExcelParser():
         else:
             return 1
         
-    def parseColumn(self, column, outputfile):
+    def parseColumn(self, column = 1, outputfile = "TOPICINPUT.txt"):
 
         if (self.__book == ""):
             return 0
@@ -102,7 +96,7 @@ class ExcelParser():
         
         # writes the contents of the column to file for mallet topic training
         # also writes column contents to separate file in lined format
-        malletinput = open(outputfile, "w")
+        malletinput = open("inputdirectory/"+outputfile, "w")
         linedcolumn = open(linedOutputfile, "w")
         
         for line in self.__comments:
@@ -114,7 +108,7 @@ class ExcelParser():
 
         return 1
         
-    def createExcelText(self, outputPath, dateCols = []):
+    def createExcelText(self, dateCols = ["3", "4"], outputPath = "EXCEL.txt"):
 
         if (self.__book == ""):
             return 0
@@ -156,14 +150,14 @@ class ExcelParser():
         return 1
 
 
-excelInputPath, colOutputPath, colToParse, ETOutputPath, dateCols = getCommandInputs()
+excelInputPath, colToParse, dateCols = getCommandInputs()
 
 test = ExcelParser()
 test.submitFile(excelInputPath)
 
 # creates .txt file from descriptions
-test.parseColumn(colToParse, colOutputPath)
+test.parseColumn(colToParse)
 
 # creates .txt file from entire input file
-test.createExcelText(ETOutputPath, dateCols)
+test.createExcelText(dateCols)
 
