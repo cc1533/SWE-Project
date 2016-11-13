@@ -144,20 +144,13 @@ class Form(QWidget):
                 call(["python", "MalletCaller.py", str(self.numTopicBox.value())], shell=True)
                 call(["python", "FileFilter.py"], shell=True)
                 call(["python", "TopicStocker.py", str(self.numTopicBox.value())], shell=True)
-<<<<<<< HEAD
             elif (os.name == "posix"):
-=======
-            else:
->>>>>>> e0feb8700b2b5b36355f21b509413d3bf52bd7a6
                 # calls for Linux
                 call(["python3.5", "MalletCaller.py", str(self.numTopicBox.value())], shell=True)
                 call(["python3.5", "FileFilter.py"], shell=True)
                 call(["python3.5", "TopicStocker.py", str(self.numTopicBox.value())], shell=True)
-<<<<<<< HEAD
             else:
                 print('Warning, Operating System is not supported.')
-=======
->>>>>>> e0feb8700b2b5b36355f21b509413d3bf52bd7a6
 
             # I thought this was appropriate because it takes a little while for everything to finish
             QMessageBox.information(self, "Processing Completed", "Mallet has finished processing.")
@@ -181,16 +174,14 @@ class Form(QWidget):
                 # the one and the datelist arguments needed to be separated
                 # hopefully this causes an error for Linux
                 call(['python', 'ExcelParser.py', inputFile, '1', '"3 4"'], shell=True)
-<<<<<<< HEAD
             elif (os.name == "posix"):
-=======
-            else:
->>>>>>> e0feb8700b2b5b36355f21b509413d3bf52bd7a6
                 # call for Linux machines
                 call(['python3.5 ExcelParser.py ' + inputFile + ' 1 "3 4"'], shell=True)
             else:
                 print('Warning, Operating System is not supported.')
-            
+
+            # decided to steal this from Titus since it's a good idea
+            QMessageBox.information(self, "Processing Completed", "Parser has completed.")            
             return
 
     def fileSearch(self):
