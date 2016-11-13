@@ -133,12 +133,24 @@ class Form(QWidget):
             QMessageBox.information(self, "Error",
                                     "Please enter the Mallet Program.")
             return
-        elif "mallet" not in name:
+        elif "Mallet" not in name:
             QMessageBox.information(self, "Error", "Please enter the Mallet Program.")
         else:
             QMessageBox.information(self, "Mallet Called", "Please wait as Mallet processes your input file.")
-            call(["python", "MalletCaller.py", 3])
-            call(["python", "TopicStocker.py", 3])
+
+            try:
+                # calls for Windows machines
+                call(["python", "MalletCaller.py", '3'], shell=True)
+                call(["python", "FileFilter.py"], shell=True)
+                call(["python", "TopicStocker.py", '3'], shell=True)
+            except:
+                # calls for Linux
+                call(["python3.5", "MalletCaller.py", '3'], shell=True)
+                call(["python3.5", "FileFilter.py"], shell=True)
+                call(["python3.5", "TopicStocker.py", '3'], shell=True)
+
+            # I thought this was appropriate because it takes a little while for everything to finish
+            QMessageBox.information(self, "Processing Completed", "Mallet has finished processing.")
             return
     
     def callParseButton(self):
@@ -153,8 +165,16 @@ class Form(QWidget):
         else:
             QMessageBox.information(self, "Valid Input File",
                                     "Parsing %s for Mallet" % inputFile)
-            print(inputFile)
-            call(['python ExcelParser.py ' + inputFile + ' 1 "3 4"'], shell=True)
+
+            try:
+                # Working call for Windows machines
+                # the one and the datelist arguments needed to be separated
+                # hopefully this causes an error for Linux
+                call(['python', 'ExcelParser.py', inputFile, '1', '"3 4"'], shell=True)
+            except:
+                # call for Linux machines
+                call(['python3.5 ExcelParser.py ' + inputFile + ' 1 "3 4"'], shell=True)
+            
             return
 
     def fileSearch(self):
@@ -175,7 +195,7 @@ class Form(QWidget):
         #print(fname1[0])
         #print(inputfile)
 
-        if "mallet" in inputfile:
+        if "Mallet" in inputfile:
             self.malletLine.setText(inputfile)
             self.malletButton.setEnabled(True)
             return
