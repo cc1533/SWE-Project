@@ -32,6 +32,7 @@
 from subprocess import call
 from PyQt5.QtCore import *
 from PyQt5.QtWidgets import *
+import os
 
 
 class Form(QWidget):
@@ -138,16 +139,16 @@ class Form(QWidget):
         else:
             QMessageBox.information(self, "Mallet Called", "Please wait as Mallet processes your input file.")
 
-            try:
+            if (os.name == "nt"):
                 # calls for Windows machines
-                call(["python", "MalletCaller.py", '3'], shell=True)
+                call(["python", "MalletCaller.py", str(self.numTopicBox.value())], shell=True)
                 call(["python", "FileFilter.py"], shell=True)
-                call(["python", "TopicStocker.py", '3'], shell=True)
-            except:
+                call(["python", "TopicStocker.py", str(self.numTopicBox.value())], shell=True)
+            else:
                 # calls for Linux
-                call(["python3.5", "MalletCaller.py", '3'], shell=True)
+                call(["python3.5", "MalletCaller.py", str(self.numTopicBox.value())], shell=True)
                 call(["python3.5", "FileFilter.py"], shell=True)
-                call(["python3.5", "TopicStocker.py", '3'], shell=True)
+                call(["python3.5", "TopicStocker.py", str(self.numTopicBox.value())], shell=True)
 
             # I thought this was appropriate because it takes a little while for everything to finish
             QMessageBox.information(self, "Processing Completed", "Mallet has finished processing.")
@@ -166,12 +167,12 @@ class Form(QWidget):
             QMessageBox.information(self, "Valid Input File",
                                     "Parsing %s for Mallet" % inputFile)
 
-            try:
+            if (os.name == "nt"):
                 # Working call for Windows machines
                 # the one and the datelist arguments needed to be separated
                 # hopefully this causes an error for Linux
                 call(['python', 'ExcelParser.py', inputFile, '1', '"3 4"'], shell=True)
-            except:
+            else:
                 # call for Linux machines
                 call(['python3.5 ExcelParser.py ' + inputFile + ' 1 "3 4"'], shell=True)
             
