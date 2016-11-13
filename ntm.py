@@ -32,6 +32,7 @@
 from subprocess import call
 from PyQt5.QtCore import *
 from PyQt5.QtWidgets import *
+import os
 
 
 class Form(QWidget):
@@ -133,12 +134,26 @@ class Form(QWidget):
             QMessageBox.information(self, "Error",
                                     "Please enter the Mallet Program.")
             return
-        elif "mallet" not in name:
+        elif "Mallet" not in name:
             QMessageBox.information(self, "Error", "Please enter the Mallet Program.")
         else:
             QMessageBox.information(self, "Mallet Called", "Please wait as Mallet processes your input file.")
-            call(["python3.5", "MalletCaller.py", 3])
-            call(["python3.5", "TopicStocker.py", 3])
+
+            if (os.name == "nt"):
+                # calls for Windows machines
+                call(["python", "MalletCaller.py", str(self.numTopicBox.value())], shell=True)
+                call(["python", "FileFilter.py"], shell=True)
+                call(["python", "TopicStocker.py", str(self.numTopicBox.value())], shell=True)
+            elif (os.name == "posix"):
+                # calls for Linux
+                call(["python3.5", "MalletCaller.py", str(self.numTopicBox.value())], shell=True)
+                call(["python3.5", "FileFilter.py"], shell=True)
+                call(["python3.5", "TopicStocker.py", str(self.numTopicBox.value())], shell=True)
+            else:
+                print('Warning, Operating System is not supported.')
+
+            # I thought this was appropriate because it takes a little while for everything to finish
+            QMessageBox.information(self, "Processing Completed", "Mallet has finished processing.")
             return
     
     def callParseButton(self):
@@ -153,8 +168,18 @@ class Form(QWidget):
         else:
             QMessageBox.information(self, "Valid Input File",
                                     "Parsing %s for Mallet" % inputFile)
-            exec1 = "python3.5 ExcelParser.py " + inputFile + ' 1 "3 4"'
-            call(exec1)
+
+            if (os.name == "nt"):
+                # Working call for Windows machines
+                # the one and the datelist arguments needed to be separated
+                # hopefully this causes an error for Linux
+                call(['python', 'ExcelParser.py', inputFile, '1', '"3 4"'], shell=True)
+            elif (os.name == "posix"):
+                # call for Linux machines
+                call(['python3.5 ExcelParser.py ' + inputFile + ' 1 "3 4"'], shell=True)
+            else:
+                print('Warning, Operating System is not supported.')
+            
             return
 
     def fileSearch(self):
@@ -175,7 +200,7 @@ class Form(QWidget):
         #print(fname1[0])
         #print(inputfile)
 
-        if "mallet" in inputfile:
+        if "Mallet" in inputfile:
             self.malletLine.setText(inputfile)
             self.malletButton.setEnabled(True)
             return
@@ -203,3 +228,4 @@ if __name__ == '__main__':
     screen.show()
  
     sys.exit(app.exec_()) 
+
