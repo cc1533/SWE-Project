@@ -28,21 +28,27 @@ from subprocess import call
 from sys import argv
 
 
-# Sets MALLET_HOME environment variable
-os.environ['MALLET_HOME'] = "C:/mallet"
+# Sets MALLET_HOME environment variable, Windows only
+if os.name == 'nt':
+    os.environ['MALLET_HOME'] = "C:/mallet"
 
-malletPath = "C:/NextTopModel"
-inputPath = malletPath + "/inputdirectory"
+# making some more linux friendly changes
+# malletPath will now be defined as an argument (since the GUI asks the user for it anyway)
+malletPath = argv[1]
+# malletPath = "C:/NextTopModel"
+# input directory will be in whatever the current working directory is (i.e. wherever MalletCaller.py is)
+inputPath = os.getcwd() + '/inputdirectory'
+# inputPath = malletPath + "/inputdirectory"
 
-numTopics = argv[1]
-numIterations = "30"
+numTopics = argv[2]
+numIterations = "30"        # Chris:  is 30 just arbitrarily picked?  What's the significance?
 
 
 class Mallet(object):
     
     def __init__(self, malletPath):
         
-        self.malletExec = malletPath + "/bin/mallet"
+        self.malletExec = malletPath  # + "/bin/mallet"
     
     def importDir(self):
         
@@ -51,7 +57,8 @@ class Mallet(object):
     
     def trainTopics(self):
         
-        inputFile = malletPath + "/readyforinput.mallet"
+        #inputFile = malletPath + "/readyforinput.mallet"
+        inputFile = 'readyforinput.mallet'
         outputState = "output_state.gz"
         command = self.malletExec + " train-topics --input " + inputFile + " --num-topics " + numTopics + " --output-state " + outputState + " --num-iterations " + numIterations
         call(command, shell=True)
