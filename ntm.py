@@ -9,17 +9,27 @@
 #
 #####################################################################################################
 #  TODO:
-#       1.  Add full button functionality
-#           - Call Mallet works but there's a problem in MalletCaller.py
-#           - Check boxes functionality
-#           - *add a new* display model button, basically call the VisualModeler?
-#       2.  Test to make sure it runs and works correctly on Windows
-#           - Make sure that everything that uses paths can work on Windows and Linux
-#       3.  Figure out how to get the model stuff to be displayed?
-#           - Just open them in any image viewer?
-#           - Create image widget in the GUI and display it there?
-#           - Interactive ggplot window displayed?
-#       4.  Make sure all calls to external modules work
+#       1.  Display models
+#               - Figure out how to send checkboxes' states as arguments to modeler
+#               - Send checkbox states, # of topics and type of model to modeler?
+#               - Figure out how to display the model in the GUI
+#                   -- A new image widget?
+#       2.  Testing on Windows / Linux
+#               - Everything works on Linux up to displaying the models but that has not been implemented yet.
+#       3.  Non-Functional Requirements
+#               - Clean up code, unify formatting across all modules
+#               - GUI changes to make it more intuitive, simplified?
+#               - Add some kind of progress bar or loading spinner when other modules are processing
+#                   -- There are notifications when the processes are done but not during processing
+#                   -- It would just be "nicer" as a user to tell that stuff is happening in the program
+#               - Any reason for us to have a menu bar?  How would it be used?  How would it make user's lives easier?
+#               - Security issues:
+#                   -- [None, at the moment]
+#               - Performance Testing:
+#                   -- Performance while idle
+#                   -- Performance while parsing the excel input file
+#                   -- Performance while Mallet is processing
+#                   -- Performance while the final model is displayed
 #
 #####################################################################################################
 #  Program info:
