@@ -12,8 +12,8 @@
 #       0.  Fix MalletCaller.py to process mallet correctly... (my bad)
 #               - It processes mallet to completion but for some reason disregards the # of topics
 #       1.  Display models
-#               - Figure out how to send checkboxes' states as arguments to modeler
-#               - Send checkbox states, # of topics and type of model to modeler?
+#               - Figure out how to send radio button states as arguments to modeler
+#               - Send radio button states, # of topics and type of model to modeler?
 #               - Figure out how to display the model in the GUI
 #                   -- A new image widget?
 #       2.  Testing on Windows / Linux
@@ -29,8 +29,7 @@
 #                   -- [None, at the moment]
 #               - Performance Testing:
 #                   -- Performance while idle
-#                   -- Performance while parsing the excel input file
-#                   -- Performance while Mallet is processing
+#                   -- Performance while processing
 #                   -- Performance while the final model is displayed
 #
 #####################################################################################################
@@ -43,7 +42,6 @@
 from subprocess import call
 from PyQt5.QtCore import *
 from PyQt5.QtWidgets import *
-# from PyQt5.QtGui import QMovie
 import os
 
 
@@ -65,10 +63,6 @@ class Form(QWidget):
         self.inputSearch = QPushButton("...")
         self.inputSearch.setToolTip('Find the file Mallet should process.')
         self.inputSearch.clicked.connect(self.fileSearch)
-        self.parseButton = QPushButton('Parse Input')
-        self.parseButton.setToolTip('Every input file must be parsed before it can be processed by Mallet')
-        self.parseButton.clicked.connect(self.callParseButton)
-        self.parseButton.setDisabled(True)
 
         # Create mallet label, text line, search button and call mallet button
         malletLabel = QLabel('Mallet Location:')
@@ -78,20 +72,24 @@ class Form(QWidget):
         self.malletSearch = QPushButton("...")
         self.malletSearch.setToolTip('Find the Mallet program.')
         self.malletSearch.clicked.connect(self.fileSearch)
-        self.malletButton = QPushButton('Call Mallet')
-        self.malletButton.setToolTip('Mallet must be called so it can process the the input file.')
-        self.malletButton.clicked.connect(self.callMalletButton)
-        self.malletButton.setDisabled(True)
+        self.malletSearch.setEnabled(False)
+
+        # Create Run button to parse input file and call mallet
+        self.runButton = QPushButton('Run Mallet')
+        self.runButton.setToolTip('Parses Excel Input File and Calls Mallet')
+        self.runButton.clicked.connect(self.runProg)
+        self.runButton.setEnabled(False)
 
         # Create check boxes, these will be used later
-        self.enhCheck = QCheckBox('View Enhancements')
+        self.enhCheck = QRadioButton('View Enhancements')
         self.enhCheck.setChecked(True)
         self.enhCheck.setToolTip('Show Enhancements?')
-        self.bugCheck = QCheckBox('View Bugs')
-        self.bugCheck.setChecked(True)
+        self.bugCheck = QRadioButton('View Bugs')
+        self.bugCheck.setChecked(False)
         self.bugCheck.setToolTip('Show Bugs?')
 
         # Create spin box widget to get the # of desired topics displayed in the model
+        numTopicLabel = QLabel('Number of Topics:  ')
         self.numTopicBox = QSpinBox()
         self.numTopicBox.setRange(1, 20)        # Arbitrarily picked 20, idk what the max should be
         self.numTopicBox.setToolTip('Number of topics to be displayed (10 by default).')
@@ -103,13 +101,6 @@ class Form(QWidget):
         self.graphTypeBox.insertItems(0, graphTypeList)
         self.graphTypeBox.setToolTip('Choose what kind of graph the data should be displayed as.')
 
-        # Testing Loading .gif widgets....
-        # self.loadingLabel = QLabel()
-        # self.loadingGif = QMovie('Loading_icon.gif')
-        # self.loadingLabel.setMovie(self.loadingGif)
-        # self.loadingGif.start()
-        # self.loadingLabel.setVisible(True)
-
         # Create layout boxes (makes things line up nicely)
         vBox1 = QVBoxLayout()
         hBox1 = QHBoxLayout()
@@ -120,156 +111,144 @@ class Form(QWidget):
         hBox1.addWidget(self.inputLine)
         hBox1.addWidget(self.inputSearch)
         vBox1.addLayout(hBox1)
-        vBox1.addWidget(self.parseButton)
+
+        # Add # of topics box
+        hBox3 = QHBoxLayout()
+        hBox3.addWidget(numTopicLabel)
+        hBox3.addWidget(self.numTopicBox)
+        vBox1.addLayout(hBox3)
 
         # Add the second set of widgets to the window (mallet stuff)
         vBox1.addWidget(malletLabel)
         hBox2.addWidget(self.malletLine)
         hBox2.addWidget(self.malletSearch)
         vBox1.addLayout(hBox2)
-        vBox1.addWidget(self.malletButton)
+        vBox1.addWidget(self.runButton)
 
         # Add checkboxes and other widgets to window
         hBox3 = QHBoxLayout()
         hBox3.addWidget(self.enhCheck)
         hBox3.addWidget(self.bugCheck)
         vBox1.addLayout(hBox3)
-        vBox1.addWidget(self.numTopicBox)
-        vBox1.addWidget(self.graphTypeBox)
-        #vBox1.addWidget(self.loadingLabel)
+        # vBox1.addWidget(self.graphTypeBox)
 
         mainLayout = QGridLayout()
-        # mainLayout.addWidget(nameLabel, 0, 0)
         mainLayout.addLayout(vBox1, 0, 1)
-        #mainLayout.addLayout(hLayout, 0, 1)
- 
+
         self.setLayout(mainLayout)
         self.setWindowTitle('Next Top Model')
- 
-    def callMalletButton(self):
-        print('GUI - Call Mallet button pressed.')
-        mPath = str(self.malletLine.text())
-        # print(mPath)
 
-        print('GUI - Testing:  ' + mPath)
-        if mPath == "":
+    def runProg(self):
+        print('GUI - Run button pressed.')
+        malletPath = str(self.malletLine.text())
+        inputFilePath = str(self.inputLine.text())
+
+        print('GUI - Testing Mallet Path...')
+        # checks for valid mallet path first
+        if malletPath == '':
             QMessageBox.information(self, 'Error',
                                     'No path found.  Please enter the Mallet Program.')
             return
-        elif 'Mallet' not in mPath and 'mallet' not in mPath:
+        elif 'mallet' not in malletPath:
             QMessageBox.information(self, 'Error',
                                     'Mallet not found in path.  Please enter the Mallet Program.')
             return
         else:
-            print('GUI - Valid path detected, calling mallet based on operating system.')
-            QMessageBox.information(self, 'Mallet Called', 'Please wait as Mallet processes your input file.')
+            print('GUI - Valid mallet path found, testing input file path.')
 
-            if os.name == 'nt':
-                # calls for Windows machines
-                print('GUI - Windows - MalletCaller.py executing -- Please Wait.')
-                call(['python', 'MalletCaller.py', mPath, str(self.numTopicBox.value())], shell=True)
-                print('GUI - Windows - FileFilter.py executing -- Please Wait.')
-                call(['python', 'FileFilter.py'], shell=True)
-                print('GUI - Windows - TopicStocker.py executing -- Please Wait.')
-                call(['python', 'TopicStocker.py', str(self.numTopicBox.value())], shell=True)
-            elif os.name == 'posix':
-                # *fixed* calls for Linux
-                print('GUI - Linux - MalletCaller.py executing -- Please Wait.')
-                call(['python3.5 MalletCaller.py ' + mPath + ' ' + str(self.numTopicBox.value())], shell=True)
-                print('GUI - Linux - FileFilter.py executing -- Please Wait.')
-                call(['python3.5 FileFilter.py'], shell=True)
-                print('GUI - Linux - TopicStocker.py executing -- Please Wait.')
-                call(['python3.5 TopicStocker.py ' + str(self.numTopicBox.value())], shell=True)
+            # if the mallet path is valid, check input file path
+            if inputFilePath == '':
+                QMessageBox.information(self, 'Error',
+                                        'No path found.  Please enter the input file path.')
+                return
+
+            elif '.xls' not in inputFilePath and '.xlsx' not in inputFilePath:
+                QMessageBox.information(self, 'Error',
+                                        'Valid Excel File not found.  Please enter a valid input file.')
+                return
+
             else:
-                print('GUI - Warning, Operating System is not supported.')
+                # if both paths are valid, go ahead and run the modules
+                print('GUI - Input File and Mallet paths are valid, running...')
 
-            # I thought this was appropriate because it takes a little while for everything to finish
-            print('GUI - All Mallet modules done processing.')
-            QMessageBox.information(self, 'Processing Completed', 'Mallet has finished processing.')
-            return
-    
-    def callParseButton(self):
-        print('GUI - Call Parser button pressed.')
-        inputFile = self.inputLine.text()
+                # Calls for Windows
+                if os.name == 'nt':
+                    # Call Parser
+                    print('GUI - Windows - ExcelParser.py executing -- Please Wait.')
+                    call(['python', 'ExcelParser.py', inputFilePath, '1', '"3 4"'], shell=True)
 
-        print('GUI - Testing:  ' + inputFile)
-        if inputFile == "":
-            QMessageBox.information(self, 'Error',
-                                    'Please enter the Input file.')
-            return
-        elif '.xls' not in inputFile or '.xlsx' not in inputFile:
-            QMessageBox.information(self, 'Error', 'Please enter a valid input file.')
-            return
-        else:
-            print('GUI - Valid path detected, calling parser.')
-            QMessageBox.information(self, 'Valid Input File',
-                                    'Parsing %s for Mallet' % inputFile)
+                    # Call MalletCaller.py
+                    print('GUI - Windows - MalletCaller.py executing -- Please Wait.')
+                    call(['python', 'MalletCaller.py', malletPath, str(self.numTopicBox.value())], shell=True)
 
-            #self.loadingLabel.setEnabled(True)
+                    # Call FileFilter.py
+                    print('GUI - Windows - FileFilter.py executing -- Please Wait.')
+                    call(['python', 'FileFilter.py'], shell=True)
 
-            if os.name == 'nt':
-                # Working call for Windows machines
-                # the one and the datelist arguments needed to be separated
-                # hopefully this causes an error for Linux
-                print('GUI - Windows - ExcelParser.py executing -- Please Wait.')
-                call(['python', 'ExcelParser.py', inputFile, '1', '"3 4"'], shell=True)
-            elif os.name == 'posix':
-                # call for Linux machines
-                print('GUI - Linux - ExcelParser.py executing -- Please Wait.')
-                call(['python3.5 ExcelParser.py ' + inputFile + ' 1 "3 4"'], shell=True)
-            else:
-                print('GUI - Warning, Operating System is not supported.')
+                    # Call TopicStocker.py
+                    print('GUI - Windows - TopicStocker.py executing -- Please Wait.')
+                    call(['python', 'TopicStocker.py', str(self.numTopicBox.value())], shell=True)
 
-            # decided to steal this from Titus since it's a good idea
-            #self.loadingLabel.setEnabled(False)
-            print('GUI - Parser processing completed.')
-            QMessageBox.information(self, 'Processing Completed', 'Parser has completed.')
-            return
+                # Calls for Linux
+                elif os.name == 'posix':
+                    # Call Parser
+                    print('GUI - Linux - ExcelParser.py executing -- Please Wait.')
+                    call(['python3.5 ExcelParser.py ' + inputFilePath + ' 1 "3 4"'], shell=True)
+
+                    # Call MalletCaller.py
+                    print('GUI - Linux - MalletCaller.py executing -- Please Wait.')
+                    call(['python3.5 MalletCaller.py ' + malletPath + ' ' + str(self.numTopicBox.value())], shell=True)
+
+                    # Call FileFilter.py
+                    print('GUI - Linux - FileFilter.py executing -- Please Wait.')
+                    call(['python3.5 FileFilter.py'], shell=True)
+
+                    # Call TopicStocker.py
+                    print('GUI - Linux - TopicStocker.py executing -- Please Wait.')
+                    call(['python3.5 TopicStocker.py ' + str(self.numTopicBox.value())], shell=True)
+
+                else:
+                    print('GUI - Operating System not supported.')
+                    return
+
+                print('GUI - All modules done processing.')
+                QMessageBox.information(self, 'Processing Completed', 'Modules have finished processing.')
 
     def fileSearch(self):
-        # QFileDialog.getOpenFileName probably gets us as close to a decent path + filename as we can get
-        # But it requires some clever formatting to get it to a usable string
         print('GUI - File Search button pressed')
         fname = QFileDialog.getOpenFileName(self, 'Open file')
 
         fname1 = str(fname).split()
-        # str(fname) returns ('/path/to/file', All Files (*)')
-        # so str(fname).split() is used to get ('/path/to/file' by itself so it can  be parsed easier
 
         inputLen = len(fname1[0])               # we need to know how long the input is
         inputLen -= 2                                   # get rid of the last two characters ',
         inputFile = fname1[0][2:inputLen]    # strip off the first two characters ('
 
         # These print statements show exactly what the problem was and how it was progressively resolved
-        #print(str(fname))
-        #print(fname1[0])
-        #print(inputfile)
+        # print(str(fname))
+        # print(fname1[0])
+        # print(inputfile)
 
         print('GUI - Testing:  ' + inputFile)
-        # all my mallet stuff is lowercase but we'll have both, the actual program should be lowercase though
+        # Is the input the mallet path or the input file path?
         if 'Mallet' in inputFile or 'mallet' in inputFile:
             print('GUI - Mallet input path detected, setting Mallet line.')
             self.malletLine.setText(inputFile)
-            self.malletButton.setEnabled(True)
+            self.runButton.setEnabled(True)
             return
         elif '.xls' in inputFile or '.xlsx' in inputFile:
             print('GUI - Excel input path detected, setting Excel line.')
             self.inputLine.setText(inputFile)
-            self.parseButton.setEnabled(True)
+            self.malletSearch.setEnabled(True)
             return
         else:
             QMessageBox.information(self, 'Error', 'Please enter a valid input file')
             return
-        # self.inputLine.setText(fname)
-
-    # This will be the function that displays the generated graphs
-    # def showGraph(self):
-        # return
 
 # code below looks for inputdirectory in the program path location, if it is not found, the program makes one
 ipDir = 'inputdirectory'
 if not os.path.exists(ipDir):
-    print('GUI - Creating Input Directory')
+    print('GUI - No Input Directory Found, Creating Input Directory')
     os.makedirs(ipDir)      # Chris:  I'm pretty sure this will work just fine on Windows as well
 else:
     print('GUI - Input Directory Found.')
