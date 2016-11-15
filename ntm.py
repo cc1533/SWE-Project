@@ -9,6 +9,8 @@
 #
 #####################################################################################################
 #  TODO:
+#       0.  Fix MalletCaller.py to process mallet correctly... (my bad)
+#               - It processes mallet to completion but for some reason disregards the # of topics
 #       1.  Display models
 #               - Figure out how to send checkboxes' states as arguments to modeler
 #               - Send checkbox states, # of topics and type of model to modeler?
@@ -145,9 +147,11 @@ class Form(QWidget):
         self.setWindowTitle('Next Top Model')
  
     def callMalletButton(self):
+        print('GUI - Call Mallet button pressed.')
         mPath = str(self.malletLine.text())
         # print(mPath)
- 
+
+        print('GUI - Testing:  ' + mPath)
         if mPath == "":
             QMessageBox.information(self, 'Error',
                                     'No path found.  Please enter the Mallet Program.')
@@ -157,28 +161,38 @@ class Form(QWidget):
                                     'Mallet not found in path.  Please enter the Mallet Program.')
             return
         else:
+            print('GUI - Valid path detected, calling mallet based on operating system.')
             QMessageBox.information(self, 'Mallet Called', 'Please wait as Mallet processes your input file.')
 
             if os.name == 'nt':
                 # calls for Windows machines
+                print('GUI - Windows - MalletCaller.py executing -- Please Wait.')
                 call(['python', 'MalletCaller.py', mPath, str(self.numTopicBox.value())], shell=True)
+                print('GUI - Windows - FileFilter.py executing -- Please Wait.')
                 call(['python', 'FileFilter.py'], shell=True)
+                print('GUI - Windows - TopicStocker.py executing -- Please Wait.')
                 call(['python', 'TopicStocker.py', str(self.numTopicBox.value())], shell=True)
             elif os.name == 'posix':
-                # *changed* calls for Linux
+                # *fixed* calls for Linux
+                print('GUI - Linux - MalletCaller.py executing -- Please Wait.')
                 call(['python3.5 MalletCaller.py ' + mPath + ' ' + str(self.numTopicBox.value())], shell=True)
+                print('GUI - Linux - FileFilter.py executing -- Please Wait.')
                 call(['python3.5 FileFilter.py'], shell=True)
+                print('GUI - Linux - TopicStocker.py executing -- Please Wait.')
                 call(['python3.5 TopicStocker.py ' + str(self.numTopicBox.value())], shell=True)
             else:
-                print('Warning, Operating System is not supported.')
+                print('GUI - Warning, Operating System is not supported.')
 
             # I thought this was appropriate because it takes a little while for everything to finish
+            print('GUI - All Mallet modules done processing.')
             QMessageBox.information(self, 'Processing Completed', 'Mallet has finished processing.')
             return
     
     def callParseButton(self):
+        print('GUI - Call Parser button pressed.')
         inputFile = self.inputLine.text()
- 
+
+        print('GUI - Testing:  ' + inputFile)
         if inputFile == "":
             QMessageBox.information(self, 'Error',
                                     'Please enter the Input file.')
@@ -187,6 +201,7 @@ class Form(QWidget):
             QMessageBox.information(self, 'Error', 'Please enter a valid input file.')
             return
         else:
+            print('GUI - Valid path detected, calling parser.')
             QMessageBox.information(self, 'Valid Input File',
                                     'Parsing %s for Mallet' % inputFile)
 
@@ -196,21 +211,25 @@ class Form(QWidget):
                 # Working call for Windows machines
                 # the one and the datelist arguments needed to be separated
                 # hopefully this causes an error for Linux
+                print('GUI - Windows - ExcelParser.py executing -- Please Wait.')
                 call(['python', 'ExcelParser.py', inputFile, '1', '"3 4"'], shell=True)
             elif os.name == 'posix':
                 # call for Linux machines
+                print('GUI - Linux - ExcelParser.py executing -- Please Wait.')
                 call(['python3.5 ExcelParser.py ' + inputFile + ' 1 "3 4"'], shell=True)
             else:
-                print('Warning, Operating System is not supported.')
+                print('GUI - Warning, Operating System is not supported.')
 
             # decided to steal this from Titus since it's a good idea
             #self.loadingLabel.setEnabled(False)
+            print('GUI - Parser processing completed.')
             QMessageBox.information(self, 'Processing Completed', 'Parser has completed.')
             return
 
     def fileSearch(self):
         # QFileDialog.getOpenFileName probably gets us as close to a decent path + filename as we can get
         # But it requires some clever formatting to get it to a usable string
+        print('GUI - File Search button pressed')
         fname = QFileDialog.getOpenFileName(self, 'Open file')
 
         fname1 = str(fname).split()
@@ -226,12 +245,15 @@ class Form(QWidget):
         #print(fname1[0])
         #print(inputfile)
 
+        print('GUI - Testing:  ' + inputFile)
         # all my mallet stuff is lowercase but we'll have both, the actual program should be lowercase though
         if 'Mallet' in inputFile or 'mallet' in inputFile:
+            print('GUI - Mallet input path detected, setting Mallet line.')
             self.malletLine.setText(inputFile)
             self.malletButton.setEnabled(True)
             return
         elif '.xls' in inputFile or '.xlsx' in inputFile:
+            print('GUI - Excel input path detected, setting Excel line.')
             self.inputLine.setText(inputFile)
             self.parseButton.setEnabled(True)
             return
@@ -247,10 +269,10 @@ class Form(QWidget):
 # code below looks for inputdirectory in the program path location, if it is not found, the program makes one
 ipDir = 'inputdirectory'
 if not os.path.exists(ipDir):
-    print('Creating Input Directory')
+    print('GUI - Creating Input Directory')
     os.makedirs(ipDir)      # Chris:  I'm pretty sure this will work just fine on Windows as well
 else:
-    print('Input Directory Found.')
+    print('GUI - Input Directory Found.')
 
 if __name__ == '__main__':
     import sys
