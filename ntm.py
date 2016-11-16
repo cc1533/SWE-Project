@@ -44,6 +44,8 @@ from PyQt5.QtCore import *
 from PyQt5.QtWidgets import *
 import os
 
+
+from VisualModeler import *
 import TopicStocker
 import FileFilter
 import MalletCaller
@@ -72,7 +74,7 @@ class Form(QWidget):
         self.inputLine = QLineEdit('/Path/To/Input/File')
         self.inputLine.setReadOnly(True)
         self.inputLine.setToolTip('This is the path to the input file Mallet should process.')
-        self.inputSearch = QPushButton("Browse...")
+        self.inputSearch = QPushButton("...")
         self.inputSearch.setToolTip('Find the file Mallet should process.')
         self.inputSearch.clicked.connect(self.fileSearch)
 
@@ -81,7 +83,7 @@ class Form(QWidget):
         self.malletLine = QLineEdit('/Path/To/Mallet/Program')
         self.malletLine.setReadOnly(True)
         self.malletLine.setToolTip('This is the path to where the Mallet program is located.')
-        self.malletSearch = QPushButton("Browse...")
+        self.malletSearch = QPushButton("...")
         self.malletSearch.setToolTip('Find the Mallet program.')
         self.malletSearch.clicked.connect(self.fileSearch)
         self.malletSearch.setEnabled(False)
@@ -109,7 +111,7 @@ class Form(QWidget):
 
         # Looking for some widget to use to change model types
         self.graphTypeBox = QComboBox()
-        graphTypeList = ['Line', 'Bar', 'Pie']
+        graphTypeList = ['All Enhancements', 'Dates of Enhancements', 'All Bugs', 'Multi Date View of Bug', 'Date Divided View of Bug']
         self.graphTypeBox.insertItems(0, graphTypeList)
         self.graphTypeBox.setToolTip('Choose what kind of graph the data should be displayed as.')
 
@@ -185,7 +187,7 @@ class Form(QWidget):
 
                 # Call Parser
                 print('GUI - ExcelParser.py executing -- Please Wait.')
-                ExcelParser.main(inputFilePath, 1, '"3 4"')
+                ExcelParser.main(inputFilePath, '1', '"3 4"')
 
                 # Call MalletCaller.py
                 print('GUI - MalletCaller.py executing -- Please Wait.')
@@ -197,7 +199,44 @@ class Form(QWidget):
 
                 # Call TopicStocker.py
                 print('GUI - TopicStocker.py executing -- Please Wait.')
-                TopicStocker.main(str(self.numTopicBox.value()))
+                topics = TopicStocker.main(str(self.numTopicBox.value()))
+
+                # Call the VisualModeler.py
+                print('GUI - VisualModeler.py executing -- Please Wait.')
+                VisualModel = VisualModeler()
+                graphType = self.graphTypeList.value()
+                    #Find the arrays of topics
+                enhTopics = topics.getEnhTopics()
+                bugTopics = topics.getBugTopics()
+                
+                #'All Enhancements', 'Dates of Enhancements'
+                #'All Bugs', 'Multi Date View of Bug', 'Date Divided View of Bug'
+
+                if (self.enhCheck.value()):
+                    #Enhancements. one of: modelVolumeEnhView or modelDateView
+                    if (graphType == 'All Enhancements'):
+                        plot = VisualModel.modelVolumeEnhView(enhTopics)
+                        print(plot)
+
+                    elif(graphType == 'Dates of Enhancements'):
+                        #When the user specifies the enhancement they want, pass that topic to the modeler
+                        pass
+
+
+                elif (self.bugCheck.value()):
+                    #Bugs. one of: modelVolumeBugView, modelMultiDateView, modelDividedView
+                    if (graphType == 'All Bugs'):
+                        plot = VisualModel.modelVolumeEnhView(bugTopics)
+                        print(plot)
+
+                    elif(graphType == 'Multi Date View of Bug'):
+                        #When the user specifies the bug they want, pass that topic to the modeler
+                        pass
+
+                    elif(graphType == 'Date Divided View of Bug'):
+                        #When the user specifies the bug they want, pass that topic to the modeler
+                        pass
+
 
                 print('GUI - All modules done processing.')
                 QMessageBox.information(self, 'Processing Completed', 'Modules have finished processing.')
