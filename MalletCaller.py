@@ -33,13 +33,13 @@ class Mallet(object):
         print('MalletCaller - Initializing')
         self.malletExec = malletPath  # + "/bin/mallet"
     
-    def importDir(self):
+    def importDir(self, binPath, inputPath):
         print('MalletCaller - Importing Directory for Mallet Processing')
         #output = "readyforinput.mallet"
         output = binPath + 'readyforinput.mallet'
         call(self.malletExec + " import-dir --input " + inputPath + " --keep-sequence --stoplist-file en.txt --output " + output, shell=True)
     
-    def trainTopics(self):
+    def trainTopics(self, binPath, numTopics, numIterations):
         print('MalletCaller - Training Mallet')
         #inputFile = malletPath + "/readyforinput.mallet"
         inputFile = binPath + 'readyforinput.mallet'
@@ -94,6 +94,6 @@ def main(malletPath, numTopics):
           + 'MalletCaller - Number of Topics = ' + numTopics)
 
     callmallet = Mallet(malletPath)
-    callmallet.importDir()
-    callmallet.trainTopics()
+    callmallet.importDir(binPath, inputPath)
+    callmallet.trainTopics(binPath, numTopics, numIterations)
     callmallet.unzipOutput()
