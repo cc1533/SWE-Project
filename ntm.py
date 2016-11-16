@@ -55,8 +55,15 @@ class Form(QWidget):
         y = 200
         self.setGeometry(x, y, x, y)
 
+        ########################################################################################################
+        ''''
+        Excel to Parser Function
+        This function takes the contents of the Excel file and converts the data into a plaintext document. 
+        ''''
+        ########################################################################################################
+        
         # Create input file label, text line, search button and the parser button
-        inputLabel = QLabel('Input File Location:')
+        inputLabel = QLabel('Input Excel File Location:')
         self.inputLine = QLineEdit('/Path/To/Input/File')
         self.inputLine.setReadOnly(True)
         self.inputLine.setToolTip('This is the path to the input file Mallet should process.')
@@ -181,7 +188,7 @@ class Form(QWidget):
                     print('GUI - Windows - MalletCaller.py executing -- Please Wait.')
                     call(['python', 'MalletCaller.py', malletPath, str(self.numTopicBox.value())], shell=True)
 
-                    # Call FileFilter.py
+x                    # Call FileFilter.py
                     print('GUI - Windows - FileFilter.py executing -- Please Wait.')
                     call(['python', 'FileFilter.py'], shell=True)
 
