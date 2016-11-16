@@ -24,14 +24,14 @@
 
 import os
 import gzip
-from subprocess import call
+from subprocess import run
 
 
 class Mallet(object):
     def __init__(self, malletPath, binPath, inputPath, numTopics, numIterations):
         print('MalletCaller - Initializing')
-        self.malletExec = malletPath
-        self.binPath = binPath
+        self.malletExec = malletPath.replace('/', '\\')
+        self.binPath = binPath.replace('/', '\\')
         self.inputPath = inputPath
         self.numTopics = numTopics
         self.numIterations = numIterations
@@ -40,16 +40,20 @@ class Mallet(object):
         print('MalletCaller - Importing Directory for Mallet Processing')
         # output = "readyforinput.mallet"
         output = self.binPath + 'readyforinput.mallet'
-        call(self.malletExec + " import-dir --input " + self.inputPath + " --keep-sequence --stoplist-file en.txt --output " + output, shell=True)
+        print(self.inputPath)
+        print(self.malletExec)
+        command = [self.malletExec, " import-dir --input ", self.inputPath, " --keep-sequence --stoplist-file en.txt --output ", output]
+        print(command)
+        run(command, shell=True, check=True)
     
     def trainTopics(self):
         print('MalletCaller - Training Mallet')
         # inputFile = malletPath + "/readyforinput.mallet"
         inputFile = self.binPath + 'readyforinput.mallet'
         outputState = "output_state.gz"
-        command = self.malletExec + " train-topics --input " + inputFile + " --num-topics " + self.numTopics + \
-                  " --output-state " + outputState + " --num-iterations " + self.numIterations
-        call(command, shell=True)
+        command = [self.malletExec, " train-topics --input ", inputFile, " --num-topics ", str(self.numTopics), " --output-state ", outputState, " --num-iterations ", self.numIterations]
+        print(command)
+        run(command, shell=True, check=True)
 
     def unzipOutput(self):
         print('MalletCaller - Unzipping and formatting output')
