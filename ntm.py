@@ -61,10 +61,10 @@ class Form(QWidget):
         self.setGeometry(x, y, x, y)
 
         ########################################################################################################
-        ''''
+        '''
         Excel to Parser Function
         This function takes the contents of the Excel file and converts the data into a plaintext document.
-        ''''
+        '''
         ########################################################################################################
 
         # Create input file label, text line, search button and the parser button
