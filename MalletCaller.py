@@ -29,25 +29,22 @@ from sys import argv
 
 class Mallet(object):
     
-    def __init__(self, malletPath, binPath, inputPath, numTopics):
+    def __init__(self, malletPath):
         print('MalletCaller - Initializing')
         self.malletExec = malletPath  # + "/bin/mallet"
-        self.binPath = binPath
-        self.inputPath = inputPath
-        self.numTopics = numTopics
     
-    def importDir(self):
+    def importDir(self, binPath, inputPath):
         print('MalletCaller - Importing Directory for Mallet Processing')
         #output = "readyforinput.mallet"
-        output = self.binPath + 'readyforinput.mallet'
-        call(self.malletExec + " import-dir --input " + self.inputPath + " --keep-sequence --stoplist-file en.txt --output " + output, shell=True)
+        output = binPath + 'readyforinput.mallet'
+        call(self.malletExec + " import-dir --input " + inputPath + " --keep-sequence --stoplist-file en.txt --output " + output, shell=True)
     
-    def trainTopics(self):
+    def trainTopics(self, binPath, numTopics, numIterations):
         print('MalletCaller - Training Mallet')
         #inputFile = malletPath + "/readyforinput.mallet"
-        inputFile = self.binPath + 'readyforinput.mallet'
+        inputFile = binPath + 'readyforinput.mallet'
         outputState = "output_state.gz"
-        command = self.malletExec + " train-topics --input " + inputFile + " --num-topics " + self.numTopics + " --output-state " + outputState + " --num-iterations " + numIterations
+        command = self.malletExec + " train-topics --input " + inputFile + " --num-topics " + numTopics + " --output-state " + outputState + " --num-iterations " + numIterations
         call(command, shell=True)
 
     def unzipOutput(self):
@@ -87,7 +84,7 @@ def main(malletPath, numTopics):
     binPath = malletPath[:malletPathLen]
     # malletPath = "C:/NextTopModel"
     # input directory will be in whatever the current working directory is (i.e. wherever MalletCaller.py is)
-    inputPath = os.getcwd() + '\inputdirectory'
+    inputPath = os.getcwd() + '/inputdirectory'
     # inputPath = malletPath + "/inputdirectory"
 
     numIterations = "30"  # Chris:  is 30 just arbitrarily picked?  What's the significance?
@@ -96,7 +93,7 @@ def main(malletPath, numTopics):
           + 'MalletCaller - Input Path = ' + inputPath + '\n'
           + 'MalletCaller - Number of Topics = ' + numTopics)
 
-    callmallet = Mallet(malletPath, binPath, inputPath, numTopics)
-    callmallet.importDir()
-    callmallet.trainTopics()
+    callmallet = Mallet(malletPath)
+    callmallet.importDir(binPath, inputPath)
+    callmallet.trainTopics(binPath, numTopics, numIterations)
     callmallet.unzipOutput()
