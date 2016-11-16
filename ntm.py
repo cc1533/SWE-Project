@@ -202,7 +202,7 @@ class Form(QWidget):
                 # Call the VisualModeler.py
                 print('GUI - VisualModeler.py executing -- Please Wait.')
                 VisualModel = VisualModeler()
-                graphType = self.graphTypeList.value()
+                graphType = self.graphTypeBox.currentText()
                     # Find the arrays of topics
                 enhTopics = topics.getEnhTopics()
                 bugTopics = topics.getBugTopics()
@@ -210,7 +210,7 @@ class Form(QWidget):
                 # 'All Enhancements', 'Dates of Enhancements'
                 # 'All Bugs', 'Multi Date View of Bug', 'Date Divided View of Bug'
 
-                if self.enhCheck.value():
+                if self.enhRadio.isChecked():
                     # Enhancements. one of: modelVolumeEnhView or modelDateView
                     if graphType == 'All Enhancements':
                         plot = VisualModel.modelVolumeEnhView(enhTopics)
@@ -220,7 +220,7 @@ class Form(QWidget):
                         #When the user specifies the enhancement they want, pass that topic to the modeler
                         pass
 
-                elif self.bugCheck.value():
+                elif self.bugRadio.isChecked():
                     # Bugs. one of: modelVolumeBugView, modelMultiDateView, modelDividedView
                     if graphType == 'All Bugs':
                         plot = VisualModel.modelVolumeEnhView(bugTopics)
