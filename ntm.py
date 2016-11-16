@@ -72,7 +72,7 @@ class Form(QWidget):
         self.inputLine = QLineEdit('/Path/To/Input/File')
         self.inputLine.setReadOnly(True)
         self.inputLine.setToolTip('This is the path to the input file Mallet should process.')
-        self.inputSearch = QPushButton("Browse")
+        self.inputSearch = QPushButton("Browse...")
         self.inputSearch.setToolTip('Find the file Mallet should process.')
         self.inputSearch.clicked.connect(self.fileSearch)
 
@@ -81,7 +81,7 @@ class Form(QWidget):
         self.malletLine = QLineEdit('/Path/To/Mallet/Program')
         self.malletLine.setReadOnly(True)
         self.malletLine.setToolTip('This is the path to where the Mallet program is located.')
-        self.malletSearch = QPushButton("Browse")
+        self.malletSearch = QPushButton("Browse...")
         self.malletSearch.setToolTip('Find the Mallet program.')
         self.malletSearch.clicked.connect(self.fileSearch)
         self.malletSearch.setEnabled(False)
