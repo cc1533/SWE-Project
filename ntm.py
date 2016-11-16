@@ -131,8 +131,8 @@ class Form(QWidget):
         self.bugRadio.setToolTip('Show Bugs?')
 
         # Add checkboxes and other widgets to window
-        hRadioBox.addWidget(self.enhCheck)
-        hRadioBox.addWidget(self.bugCheck)
+        hRadioBox.addWidget(self.enhRadio)
+        hRadioBox.addWidget(self.bugRadio)
         vertBox.addLayout(hRadioBox)
 
         # Looking for some widget to use to change model types
@@ -185,11 +185,11 @@ class Form(QWidget):
 
                 # Call Parser
                 print('GUI - ExcelParser.py executing -- Please Wait.')
-                ExcelParser.main(inputFilePath, '1', '"3 4"')
+                ExcelParser.main(inputFilePath, 1, ["3", "4"])
 
                 # Call MalletCaller.py
                 print('GUI - MalletCaller.py executing -- Please Wait.')
-                MalletCaller.main(malletPath, str(self.numTopicBox.value()))
+                MalletCaller.main(malletPath, self.numTopicBox.value())
 
                 # Call FileFilter.py
                 print('GUI - FileFilter.py executing -- Please Wait.')
@@ -197,7 +197,7 @@ class Form(QWidget):
 
                 # Call TopicStocker.py
                 print('GUI - TopicStocker.py executing -- Please Wait.')
-                topics = TopicStocker.main(str(self.numTopicBox.value()))
+                topics = TopicStocker.main(self.numTopicBox.value())
 
                 # Call the VisualModeler.py
                 print('GUI - VisualModeler.py executing -- Please Wait.')
