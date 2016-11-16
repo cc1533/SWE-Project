@@ -25,58 +25,30 @@
 import os
 import gzip
 from subprocess import call
-from sys import argv
 
-
-# Sets MALLET_HOME environment variable, Windows only
-if os.name == 'nt':
-    os.environ['MALLET_HOME'] = "C:/mallet"
-
-# making some more linux friendly changes
-# malletPath will now be defined as an argument (since the GUI asks the user for it anyway)
-
-print("\n\n\n\n")
-for x in range(len(argv)):
-    print(argv[x])
-print("\n\n\n\n")
-
-
-malletPath = argv[1]
-malletPathLen = len(malletPath)
-malletPathLen -= 6          # path usually ends with .../bin/mallet so this just cuts off the 'mallet' at the end
-binPath = malletPath[:malletPathLen]
-# malletPath = "C:/NextTopModel"
-# input directory will be in whatever the current working directory is (i.e. wherever MalletCaller.py is)
-inputPath = os.getcwd() + '/inputdirectory'
-# inputPath = malletPath + "/inputdirectory"
-
-numTopics = argv[2]
-numIterations = "30"        # Chris:  is 30 just arbitrarily picked?  What's the significance?
-
-print('MalletCaller - Mallet Path = ' + malletPath + '\n'
-      + 'MalletCaller - Input Path = ' + inputPath + '\n'
-      + 'MalletCaller - Number of Topics = ' + numTopics)
 
 class Mallet(object):
-    
-    def __init__(self, malletPath):
+    def __init__(self, malletPath, binPath, inputPath, numTopics, numIterations):
         print('MalletCaller - Initializing')
-        guess = "c:/mallet"
-        self.malletExec = guess + "/bin/mallet"
+        self.malletExec = malletPath
+        self.binPath = binPath
+        self.inputPath = inputPath
+        self.numTopics = numTopics
+        self.numIterations = numIterations
     
     def importDir(self):
         print('MalletCaller - Importing Directory for Mallet Processing')
-        #output = "readyforinput.mallet"
-        output = 'readyforinput.mallet'
-        print(self.malletExec + " import-dir --input " + inputPath + " --keep-sequence --stoplist-file en.txt --output " + output)
-        call(self.malletExec + " import-dir --input " + inputPath + " --keep-sequence --stoplist-file en.txt --output " + output, shell=True)
+        # output = "readyforinput.mallet"
+        output = self.binPath + 'readyforinput.mallet'
+        call(self.malletExec + " import-dir --input " + self.inputPath + " --keep-sequence --stoplist-file en.txt --output " + output, shell=True)
     
     def trainTopics(self):
         print('MalletCaller - Training Mallet')
-        #inputFile = malletPath + "/readyforinput.mallet"
-        inputFile = 'readyforinput.mallet'
+        # inputFile = malletPath + "/readyforinput.mallet"
+        inputFile = self.binPath + 'readyforinput.mallet'
         outputState = "output_state.gz"
-        command = self.malletExec + " train-topics --input " + inputFile + " --num-topics " + numTopics + " --output-state " + outputState + " --num-iterations " + numIterations
+        command = self.malletExec + " train-topics --input " + inputFile + " --num-topics " + self.numTopics + \
+                  " --output-state " + outputState + " --num-iterations " + self.numIterations
         call(command, shell=True)
 
     def unzipOutput(self):
@@ -103,7 +75,27 @@ class Mallet(object):
             
         zipped.close()
 
-callmallet = Mallet(malletPath)
-callmallet.importDir()
-callmallet.trainTopics()
-callmallet.unzipOutput()
+
+def main(malletPath, numTopics):
+    # Sets MALLET_HOME environment variable, Windows only
+    if os.name == 'nt':
+        os.environ['MALLET_HOME'] = "C:/mallet"
+
+    # making some more linux friendly changes
+    # malletPath will now be defined as an argument (since the GUI asks the user for it anyway)
+    malletPathLen = len(malletPath)
+    malletPathLen -= 6  # path usually ends with .../bin/mallet so this just cuts off the 'mallet' at the end
+    binPath = malletPath[:malletPathLen]
+    # malletPath = "C:/NextTopModel"
+    # input directory will be in whatever the current working directory is (i.e. wherever MalletCaller.py is)
+    inputPath = os.getcwd() + '\inputdirectory'
+    # inputPath = malletPath + "/inputdirectory"
+
+    numIterations = "30"  # Chris:  is 30 just arbitrarily picked?  What's the significance?
+
+    # print('MalletCaller - Mallet Path = ' + malletPath + '\n' + 'MalletCaller - Input Path = ' + inputPath + '\n' + 'MalletCaller - Number of Topics = ' + numTopics)
+
+    callmallet = Mallet(malletPath, binPath, inputPath, numTopics, numIterations)
+    callmallet.importDir()
+    callmallet.trainTopics()
+    callmallet.unzipOutput()
