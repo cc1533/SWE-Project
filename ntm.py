@@ -75,7 +75,7 @@ class Form(QWidget):
         self.malletSearch.setEnabled(False)
 
         # Create Run button to parse input file and call mallet
-        self.runButton = QPushButton('Run Mallet')
+        self.runButton = QPushButton('Execute')
         self.runButton.setToolTip('Parses Excel Input File and Calls Mallet')
         self.runButton.clicked.connect(self.runProg)
         self.runButton.setEnabled(False)
