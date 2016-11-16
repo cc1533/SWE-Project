@@ -38,6 +38,7 @@ class Mallet(object):
     
     def importDir(self):
         print('MalletCaller - Importing Directory for Mallet Processing')
+<<<<<<< Updated upstream
         # output = "readyforinput.mallet"
         output = self.binPath + 'readyforinput.mallet'
         print(self.inputPath)
@@ -45,11 +46,23 @@ class Mallet(object):
         command = [self.malletExec, "import-dir", "--input", self.inputPath, "--keep-sequence", "--stoplist-file", "en.txt", "--output", output]
         print(command)
         run(command, shell=True, check=True)
+=======
+        output = "readyforinput.mallet"
+        '''
+        inputPathLen = len(self.inputPath)
+        inputPathLen -= 15
+        output = self.inputPath + 'readyforinput.mallet'
+        '''
+        call(self.malletExec + " import-dir --input " + self.inputPath + " --keep-sequence --stoplist-file en.txt --output " + output, shell=True)
+>>>>>>> Stashed changes
     
     def trainTopics(self):
         print('MalletCaller - Training Mallet')
         # inputFile = malletPath + "/readyforinput.mallet"
-        inputFile = self.binPath + 'readyforinput.mallet'
+        inputPathLen = len(self.inputPath)
+        inputPathLen -= 14
+        # homePath = self.inputPath[:inputPathLen]
+        inputFile = self.inputPath[:inputPathLen] + 'readyforinput.mallet'
         outputState = "output_state.gz"
         command = [self.malletExec, "train-topics", "--input", inputFile, "--num-topics", str(self.numTopics), "--output-state", outputState, "--num-iterations", self.numIterations]
         print(command)
@@ -92,7 +105,7 @@ def main(malletPath, numTopics):
     binPath = malletPath[:malletPathLen]
     # malletPath = "C:/NextTopModel"
     # input directory will be in whatever the current working directory is (i.e. wherever MalletCaller.py is)
-    inputPath = os.getcwd() + '\inputdirectory'
+    inputPath = os.getcwd() + '/inputdirectory'
     # inputPath = malletPath + "/inputdirectory"
 
     numIterations = "30"  # Chris:  is 30 just arbitrarily picked?  What's the significance?
