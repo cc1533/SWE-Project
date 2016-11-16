@@ -89,7 +89,8 @@ class Form(QWidget):
         # Create Run button to parse input file and call mallet
         self.runButton = QPushButton('Execute')
         self.runButton.setToolTip('Parses Excel Input File and Calls Mallet')
-        self.runButton.clicked.connect(self.runProg)
+        self.runButton.clicked.connect(self.
+                                      )
         self.runButton.setEnabled(False)
 
         # Create check boxes, these will be used later
@@ -185,7 +186,7 @@ class Form(QWidget):
 
                 # Call Parser
                 print('GUI - ExcelParser.py executing -- Please Wait.')
-                ExcelParser.main(inputFilePath, '1', '"3 4"')
+                ExcelParser.main(inputFilePath, 1, '"3 4"')
 
                 # Call MalletCaller.py
                 print('GUI - MalletCaller.py executing -- Please Wait.')
