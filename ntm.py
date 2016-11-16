@@ -44,6 +44,11 @@ from PyQt5.QtCore import *
 from PyQt5.QtWidgets import *
 import os
 
+import TopicStocker
+import FileFilter
+import MalletCaller
+import ExcelParser
+
 
 class Form(QWidget):
 
@@ -180,22 +185,18 @@ class Form(QWidget):
 
                 # Call Parser
                 print('GUI - ExcelParser.py executing -- Please Wait.')
-                import ExcelParser
                 ExcelParser.main(inputFilePath, '1', '"3 4"')
 
                 # Call MalletCaller.py
                 print('GUI - MalletCaller.py executing -- Please Wait.')
-                import MalletCaller
                 MalletCaller.main(malletPath, str(self.numTopicBox.value()))
 
                 # Call FileFilter.py
                 print('GUI - FileFilter.py executing -- Please Wait.')
-                import FileFilter
                 FileFilter.main()
 
                 # Call TopicStocker.py
                 print('GUI - TopicStocker.py executing -- Please Wait.')
-                import TopicStocker
                 TopicStocker.main(str(self.numTopicBox.value()))
 
                 print('GUI - All modules done processing.')
