@@ -173,7 +173,7 @@ def main(numOfTopics):
     stockTopics = TopicStocker()
     stockTopics.initializeTopics(numOfTopics)
     stockTopics.stockTopics()
-
+    return stockTopics
     # TEST
     """
     enhTopics = stockTopics.getEnhTopics()
