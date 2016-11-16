@@ -53,12 +53,12 @@ class TopicStocker():
 
         self.__numTopics = numOfTopics
         
-        for i in range(self.__numTopics):
+        for i in range(int(self.__numTopics)):
             self.__enhTopics.append(Topics.EnhancementTopic())
             self.__bugTopics.append(Topics.BugTopic())
 
-        self.__enhWords = [[] for x in range(self.__numTopics)]
-        self.__bugWords = [[[] for x in range(6)] for x in range(self.__numTopics)]
+        self.__enhWords = [[] for x in range(int(self.__numTopics))]
+        self.__bugWords = [[[] for x in range(6)] for x in range(int(self.__numTopics))]
 
     def stockTopics(self):
 
@@ -154,13 +154,13 @@ class TopicStocker():
         # this section sets the wordlist for each topic/severity etc...
         topic = 0
         severity = ["trivial", "minor", "normal", "major", "critical", "blocker"]
-        while (topic < self.__numTopics):
+        while (topic < int(self.__numTopics)):
             self.__enhTopics[topic].setWords(self.__enhWords[topic])
             topic += 1
 
         topic = 0
         sev = 0
-        while (topic < self.__numTopics):
+        while (topic < int(self.__numTopics)):
             sev = 0
             while (sev < len(self.__bugWords[topic])):
                 self.__bugTopics[topic].setWords(severity[sev], self.__bugWords[topic][sev])
