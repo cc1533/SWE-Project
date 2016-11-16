@@ -171,45 +171,25 @@ class Form(QWidget):
                 # if both paths are valid, go ahead and run the modules
                 print('GUI - Input File and Mallet paths are valid, running...')
 
-                # Calls for Windows
-                if os.name == 'nt':
-                    # Call Parser
-                    print('GUI - Windows - ExcelParser.py executing -- Please Wait.')
-                    call(['python', 'ExcelParser.py', inputFilePath, '1', '"3 4"'], shell=True)
+                # Call Parser
+                print('GUI - ExcelParser.py executing -- Please Wait.')
+                import ExcelParser
+                ExcelParser.main(inputFilePath, '1', '"3 4"')
 
-                    # Call MalletCaller.py
-                    print('GUI - Windows - MalletCaller.py executing -- Please Wait.')
-                    call(['python', 'MalletCaller.py', malletPath, str(self.numTopicBox.value())], shell=True)
+                # Call MalletCaller.py
+                print('GUI - MalletCaller.py executing -- Please Wait.')
+                import MalletCaller
+                MalletCaller.main(malletPath, str(self.numTopicBox.value()))
 
-                    # Call FileFilter.py
-                    print('GUI - Windows - FileFilter.py executing -- Please Wait.')
-                    call(['python', 'FileFilter.py'], shell=True)
+                # Call FileFilter.py
+                print('GUI - FileFilter.py executing -- Please Wait.')
+                import FileFilter
+                FileFilter.main()
 
-                    # Call TopicStocker.py
-                    print('GUI - Windows - TopicStocker.py executing -- Please Wait.')
-                    call(['python', 'TopicStocker.py', str(self.numTopicBox.value())], shell=True)
-
-                # Calls for Linux
-                elif os.name == 'posix':
-                    # Call Parser
-                    print('GUI - Linux - ExcelParser.py executing -- Please Wait.')
-                    call(['python3.5 ExcelParser.py ' + inputFilePath + ' 1 "3 4"'], shell=True)
-
-                    # Call MalletCaller.py
-                    print('GUI - Linux - MalletCaller.py executing -- Please Wait.')
-                    call(['python3.5 MalletCaller.py ' + malletPath + ' ' + str(self.numTopicBox.value())], shell=True)
-
-                    # Call FileFilter.py
-                    print('GUI - Linux - FileFilter.py executing -- Please Wait.')
-                    call(['python3.5 FileFilter.py'], shell=True)
-
-                    # Call TopicStocker.py
-                    print('GUI - Linux - TopicStocker.py executing -- Please Wait.')
-                    call(['python3.5 TopicStocker.py ' + str(self.numTopicBox.value())], shell=True)
-
-                else:
-                    print('GUI - Operating System not supported.')
-                    return
+                # Call TopicStocker.py
+                print('GUI - TopicStocker.py executing -- Please Wait.')
+                import TopicStocker
+                TopicStocker.main(str(self.numTopicBox.value()))
 
                 print('GUI - All modules done processing.')
                 QMessageBox.information(self, 'Processing Completed', 'Modules have finished processing.')

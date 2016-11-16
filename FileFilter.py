@@ -3,40 +3,42 @@
 # which keywords from the output_state file belong to which line and subsequently which date
 # and enhancement or bug type
 
-stopf = open("en.txt", "r")
-opfile = open("TOPICINPUT.lined", "r")
 
-new = opfile.read().lower()
+def main():
+    stopf = open("en.txt", "r")
+    opfile = open("TOPICINPUT.lined", "r")
 
-stops = stopf.readlines()
-for line in range(len(stops)):
-    stops[line] = stops[line].split()[0]
+    new = opfile.read().lower()
 
-for word in stops:
-    while (" "+word+" " in new):
-        new = new.replace(" "+word+" ", " ")
-    while ("\n"+word+" " in new):
-        new = new.replace("\n"+word+" ", "\n")
-    while (" "+word+"\n" in new):
-        new = new.replace(" "+word+"\n", "\n")
-    while ("\n"+word+"\n" in new):
-        new = new.replace("\n"+word+"\n", "\n\n")
+    stops = stopf.readlines()
+    for line in range(len(stops)):
+        stops[line] = stops[line].split()[0]
 
-while (". " in new):
-    new = new.replace(". ", " ")
-while ("'" in new):
-    new = new.replace("'", "")
-while ("," in new):
-    new = new.replace(",", "")
-while (": " in new):
-    new = new.replace(": ", " ")
-for x in ['1','2','3','4','5','6','7','8','9','0', '(', ')']:
-    while (x in new):
-        new = new.replace(x, "")
+    for word in stops:
+        while (" "+word+" " in new):
+            new = new.replace(" "+word+" ", " ")
+        while ("\n"+word+" " in new):
+            new = new.replace("\n"+word+" ", "\n")
+        while (" "+word+"\n" in new):
+            new = new.replace(" "+word+"\n", "\n")
+        while ("\n"+word+"\n" in new):
+            new = new.replace("\n"+word+"\n", "\n\n")
 
-newfile = open("FILTERED.txt", "w")
-newfile.write(new)
-newfile.close()
+    while (". " in new):
+        new = new.replace(". ", " ")
+    while ("'" in new):
+        new = new.replace("'", "")
+    while ("," in new):
+        new = new.replace(",", "")
+    while (": " in new):
+        new = new.replace(": ", " ")
+    for x in ['1','2','3','4','5','6','7','8','9','0', '(', ')']:
+        while (x in new):
+            new = new.replace(x, "")
 
-opfile.close()
-stopf.close()
+    newfile = open("FILTERED.txt", "w")
+    newfile.write(new)
+    newfile.close()
+
+    opfile.close()
+    stopf.close()

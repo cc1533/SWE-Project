@@ -150,14 +150,13 @@ class ExcelParser():
         return 1
 
 
-excelInputPath, colToParse, dateCols = getCommandInputs()
+def main(excelInputPath, colToParse, dateCols):
 
-test = ExcelParser()
-test.submitFile(excelInputPath)
+    test = ExcelParser()
+    test.submitFile(excelInputPath)
 
-# creates .txt file from descriptions
-test.parseColumn(colToParse)
+    # creates .txt file from descriptions
+    test.parseColumn(colToParse)
 
-# creates .txt file from entire input file
-test.createExcelText(dateCols)
-
+    # creates .txt file from entire input file
+    test.createExcelText(dateCols)

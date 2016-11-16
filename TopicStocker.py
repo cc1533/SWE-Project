@@ -168,31 +168,32 @@ class TopicStocker():
             topic += 1
 
 
-numOfTopics = int(argv[1])
-stockTopics = TopicStocker()
-stockTopics.initializeTopics(numOfTopics)
-stockTopics.stockTopics()
-      
-# TEST
-"""
-enhTopics = stockTopics.getEnhTopics()
-bugTopics = stockTopics.getBugTopics()
+def main(numOfTopics):
 
-i = 0
-for topic in enhTopics:
-    print("EnhTopic " + str(i) + " 2003-09-22 date count: " + str(topic.getDateCount("2003-09-22")))
-    print("EnhTopic " + str(i) + " 2007-11-16 date count: " + str(topic.getDateCount("2007-11-16")))
-    print("EnhTopic " + str(i) + " 2004-10-23 date count: " + str(topic.getDateCount("2004-10-23")))
-    print("EnhTopic " + str(i) + " 2003-09-22 date count: " + str(topic.getDateCount("2003-09-22")))
-    print("")
-    i += 1
-i = 0
-for topic in bugTopics:
-    print("BugTopic " + str(i) + " normal 2003-09-22 date count: " + str(topic.getDateCount("normal","2003-09-22")))
-    print("BugTopic " + str(i) + " normal 2007-11-16 date count: " + str(topic.getDateCount("normal","2007-11-16")))
-    print("BugTopic " + str(i) + " normal 2004-10-23 date count: " + str(topic.getDateCount("normal","2004-10-23")))
-    print("BugTopic " + str(i) + " normal 2003-09-22 date count: " + str(topic.getDateCount("normal","2003-09-22")))
-    print("")
-    i += 1
-"""
-# TEST: END
+    stockTopics = TopicStocker()
+    stockTopics.initializeTopics(numOfTopics)
+    stockTopics.stockTopics()
+
+    # TEST
+    """
+    enhTopics = stockTopics.getEnhTopics()
+    bugTopics = stockTopics.getBugTopics()
+
+    i = 0
+    for topic in enhTopics:
+        print("EnhTopic " + str(i) + " 2003-09-22 date count: " + str(topic.getDateCount("2003-09-22")))
+        print("EnhTopic " + str(i) + " 2007-11-16 date count: " + str(topic.getDateCount("2007-11-16")))
+        print("EnhTopic " + str(i) + " 2004-10-23 date count: " + str(topic.getDateCount("2004-10-23")))
+        print("EnhTopic " + str(i) + " 2003-09-22 date count: " + str(topic.getDateCount("2003-09-22")))
+        print("")
+        i += 1
+    i = 0
+    for topic in bugTopics:
+        print("BugTopic " + str(i) + " normal 2003-09-22 date count: " + str(topic.getDateCount("normal","2003-09-22")))
+        print("BugTopic " + str(i) + " normal 2007-11-16 date count: " + str(topic.getDateCount("normal","2007-11-16")))
+        print("BugTopic " + str(i) + " normal 2004-10-23 date count: " + str(topic.getDateCount("normal","2004-10-23")))
+        print("BugTopic " + str(i) + " normal 2003-09-22 date count: " + str(topic.getDateCount("normal","2003-09-22")))
+        print("")
+        i += 1
+    """
+    # TEST: END
