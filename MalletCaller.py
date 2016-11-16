@@ -43,7 +43,7 @@ class Mallet(object):
         print(self.inputPath)
         print(self.malletExec)
         command = [self.malletExec, "import-dir", "--input", self.inputPath, "--keep-sequence", "--stoplist-file", "en.txt", "--output", output]
-        print(command)
+        #print(command)
         run(command, shell=True, check=True)
     
     def trainTopics(self):
@@ -52,7 +52,7 @@ class Mallet(object):
         inputFile = self.binPath + 'readyforinput.mallet'
         outputState = "output_state.gz"
         command = [self.malletExec, "train-topics", "--input", inputFile, "--num-topics", str(self.numTopics), "--output-state", outputState, "--num-iterations", self.numIterations]
-        print(command)
+        #print(command)
         run(command, shell=True, check=True)
 
     def unzipOutput(self):
