@@ -58,16 +58,17 @@ class Form(QWidget):
         super(Form, self).__init__(parent)
 
         # setGeometry(self, ax, ay, aw, ah) -> x, y, width, height
-        x = 300
+        x = 500
         y = 200
         self.setGeometry(x, y, x, y)
 
-        ########################################################################################################
-        '''
-        Excel to Parser Function
-        This function takes the contents of the Excel file and converts the data into a plaintext document.
-        '''
-        ########################################################################################################
+        # Create layout boxes (makes things line up nicely)
+        vertBox = QVBoxLayout()
+        hInputBox = QHBoxLayout()
+        hNumTopicBox = QHBoxLayout()
+        hMalletBox = QHBoxLayout()
+        hRadioBox = QHBoxLayout()
+
 
         # Create input file label, text line, search button and the parser button
         inputLabel = QLabel('Input Excel File Location:')
@@ -77,6 +78,24 @@ class Form(QWidget):
         self.inputSearch = QPushButton("...")
         self.inputSearch.setToolTip('Find the file Mallet should process.')
         self.inputSearch.clicked.connect(self.fileSearch)
+
+        # Add the first set of widgets to the window (input file stuff)
+        vertBox.addWidget(inputLabel)
+        hInputBox.addWidget(self.inputLine)
+        hInputBox.addWidget(self.inputSearch)
+        vertBox.addLayout(hInputBox)
+
+        # Create spin box widget to get the # of desired topics displayed in the model
+        numTopicLabel = QLabel('Number of Topics:  ')
+        self.numTopicBox = QSpinBox()
+        self.numTopicBox.setRange(1, 20)  # Arbitrarily picked 20, idk what the max should be
+        self.numTopicBox.setToolTip('Number of topics to be displayed (10 by default).')
+        self.numTopicBox.setValue(10)
+
+        # Add # of topics box
+        hNumTopicBox.addWidget(numTopicLabel)
+        hNumTopicBox.addWidget(self.numTopicBox)
+        vertBox.addLayout(hNumTopicBox)
 
         # Create mallet label, text line, search button and call mallet button
         malletLabel = QLabel('Mallet Location:')
@@ -88,26 +107,33 @@ class Form(QWidget):
         self.malletSearch.clicked.connect(self.fileSearch)
         self.malletSearch.setEnabled(False)
 
+        # Add the second set of widgets to the window (mallet stuff)
+        vertBox.addWidget(malletLabel)
+        hMalletBox.addWidget(self.malletLine)
+        hMalletBox.addWidget(self.malletSearch)
+        vertBox.addLayout(hMalletBox)
+
         # Create Run button to parse input file and call mallet
         self.runButton = QPushButton('Execute')
         self.runButton.setToolTip('Parses Excel Input File and Calls Mallet')
         self.runButton.clicked.connect(self.runProg)
         self.runButton.setEnabled(False)
 
-        # Create check boxes, these will be used later
-        self.enhCheck = QRadioButton('View Enhancements')
-        self.enhCheck.setChecked(True)
-        self.enhCheck.setToolTip('Show Enhancements?')
-        self.bugCheck = QRadioButton('View Bugs')
-        self.bugCheck.setChecked(False)
-        self.bugCheck.setToolTip('Show Bugs?')
+        # Add run button to window
+        vertBox.addWidget(self.runButton)
 
-        # Create spin box widget to get the # of desired topics displayed in the model
-        numTopicLabel = QLabel('Number of Topics:  ')
-        self.numTopicBox = QSpinBox()
-        self.numTopicBox.setRange(1, 20)        # Arbitrarily picked 20, idk what the max should be
-        self.numTopicBox.setToolTip('Number of topics to be displayed (10 by default).')
-        self.numTopicBox.setValue(10)
+        # Create check boxes, these will be used later
+        self.enhRadio = QRadioButton('View Enhancements')
+        self.enhRadio.setChecked(False)
+        self.enhRadio.setToolTip('Show Enhancements?')
+        self.bugRadio = QRadioButton('View Bugs')
+        self.bugRadio.setChecked(False)
+        self.bugRadio.setToolTip('Show Bugs?')
+
+        # Add checkboxes and other widgets to window
+        hRadioBox.addWidget(self.enhCheck)
+        hRadioBox.addWidget(self.bugCheck)
+        vertBox.addLayout(hRadioBox)
 
         # Looking for some widget to use to change model types
         self.graphTypeBox = QComboBox()
@@ -115,39 +141,11 @@ class Form(QWidget):
         self.graphTypeBox.insertItems(0, graphTypeList)
         self.graphTypeBox.setToolTip('Choose what kind of graph the data should be displayed as.')
 
-        # Create layout boxes (makes things line up nicely)
-        vBox1 = QVBoxLayout()
-        hBox1 = QHBoxLayout()
-        hBox2 = QHBoxLayout()
-
-        # Add the first set of widgets to the window (input file stuff)
-        vBox1.addWidget(inputLabel)
-        hBox1.addWidget(self.inputLine)
-        hBox1.addWidget(self.inputSearch)
-        vBox1.addLayout(hBox1)
-
-        # Add # of topics box
-        hBox3 = QHBoxLayout()
-        hBox3.addWidget(numTopicLabel)
-        hBox3.addWidget(self.numTopicBox)
-        vBox1.addLayout(hBox3)
-
-        # Add the second set of widgets to the window (mallet stuff)
-        vBox1.addWidget(malletLabel)
-        hBox2.addWidget(self.malletLine)
-        hBox2.addWidget(self.malletSearch)
-        vBox1.addLayout(hBox2)
-        vBox1.addWidget(self.runButton)
-
-        # Add checkboxes and other widgets to window
-        hBox3 = QHBoxLayout()
-        hBox3.addWidget(self.enhCheck)
-        hBox3.addWidget(self.bugCheck)
-        vBox1.addLayout(hBox3)
-        # vBox1.addWidget(self.graphTypeBox)
+        # Add graphTypeBox to window
+        vertBox.addWidget(self.graphTypeBox)
 
         mainLayout = QGridLayout()
-        mainLayout.addLayout(vBox1, 0, 1)
+        mainLayout.addLayout(vertBox, 0, 1)
 
         self.setLayout(mainLayout)
         self.setWindowTitle('Next Top Model')
@@ -205,38 +203,36 @@ class Form(QWidget):
                 print('GUI - VisualModeler.py executing -- Please Wait.')
                 VisualModel = VisualModeler()
                 graphType = self.graphTypeList.value()
-                    #Find the arrays of topics
+                    # Find the arrays of topics
                 enhTopics = topics.getEnhTopics()
                 bugTopics = topics.getBugTopics()
                 
-                #'All Enhancements', 'Dates of Enhancements'
-                #'All Bugs', 'Multi Date View of Bug', 'Date Divided View of Bug'
+                # 'All Enhancements', 'Dates of Enhancements'
+                # 'All Bugs', 'Multi Date View of Bug', 'Date Divided View of Bug'
 
-                if (self.enhCheck.value()):
-                    #Enhancements. one of: modelVolumeEnhView or modelDateView
-                    if (graphType == 'All Enhancements'):
+                if self.enhCheck.value():
+                    # Enhancements. one of: modelVolumeEnhView or modelDateView
+                    if graphType == 'All Enhancements':
                         plot = VisualModel.modelVolumeEnhView(enhTopics)
                         print(plot)
 
-                    elif(graphType == 'Dates of Enhancements'):
+                    elif graphType == 'Dates of Enhancements':
                         #When the user specifies the enhancement they want, pass that topic to the modeler
                         pass
 
-
-                elif (self.bugCheck.value()):
-                    #Bugs. one of: modelVolumeBugView, modelMultiDateView, modelDividedView
-                    if (graphType == 'All Bugs'):
+                elif self.bugCheck.value():
+                    # Bugs. one of: modelVolumeBugView, modelMultiDateView, modelDividedView
+                    if graphType == 'All Bugs':
                         plot = VisualModel.modelVolumeEnhView(bugTopics)
                         print(plot)
 
-                    elif(graphType == 'Multi Date View of Bug'):
-                        #When the user specifies the bug they want, pass that topic to the modeler
+                    elif graphType == 'Multi Date View of Bug':
+                        # When the user specifies the bug they want, pass that topic to the modeler
                         pass
 
-                    elif(graphType == 'Date Divided View of Bug'):
-                        #When the user specifies the bug they want, pass that topic to the modeler
+                    elif graphType == 'Date Divided View of Bug':
+                        # When the user specifies the bug they want, pass that topic to the modeler
                         pass
-
 
                 print('GUI - All modules done processing.')
                 QMessageBox.information(self, 'Processing Completed', 'Modules have finished processing.')

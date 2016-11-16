@@ -38,7 +38,7 @@ class Mallet(object):
     
     def importDir(self):
         print('MalletCaller - Importing Directory for Mallet Processing')
-<<<<<<< Updated upstream
+        # <<<<<<< Updated upstream
         # output = "readyforinput.mallet"
         output = self.binPath + 'readyforinput.mallet'
         print(self.inputPath)
@@ -46,15 +46,15 @@ class Mallet(object):
         command = [self.malletExec, "import-dir", "--input", self.inputPath, "--keep-sequence", "--stoplist-file", "en.txt", "--output", output]
         #print(command)
         run(command, shell=True, check=True)
-=======
+        '''
+        =======
         output = "readyforinput.mallet"
-        '''
-        inputPathLen = len(self.inputPath)
-        inputPathLen -= 15
-        output = self.inputPath + 'readyforinput.mallet'
-        '''
+        #inputPathLen = len(self.inputPath)
+        #inputPathLen -= 15
+        #output = self.inputPath + 'readyforinput.mallet'
         call(self.malletExec + " import-dir --input " + self.inputPath + " --keep-sequence --stoplist-file en.txt --output " + output, shell=True)
->>>>>>> Stashed changes
+        >>>>>>> Stashed changes
+        '''
     
     def trainTopics(self):
         print('MalletCaller - Training Mallet')
