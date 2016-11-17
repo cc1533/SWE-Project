@@ -45,7 +45,8 @@ from PyQt5.QtWidgets import *
 import os
 
 
-from VisualModeler import *
+# from VisualModeler import *
+import VisualModeler
 import TopicStocker
 import FileFilter
 import MalletCaller
@@ -131,8 +132,8 @@ class Form(QWidget):
         self.bugRadio.setToolTip('Show Bugs?')
 
         # Add checkboxes and other widgets to window
-        hRadioBox.addWidget(self.enhCheck)
-        hRadioBox.addWidget(self.bugCheck)
+        hRadioBox.addWidget(self.enhRadio)
+        hRadioBox.addWidget(self.bugRadio)
         vertBox.addLayout(hRadioBox)
 
         # Looking for some widget to use to change model types
@@ -185,11 +186,11 @@ class Form(QWidget):
 
                 # Call Parser
                 print('GUI - ExcelParser.py executing -- Please Wait.')
-                ExcelParser.main(inputFilePath, '1', '"3 4"')
+                ExcelParser.main(inputFilePath, 1, ["3", "4"])
 
                 # Call MalletCaller.py
                 print('GUI - MalletCaller.py executing -- Please Wait.')
-                MalletCaller.main(malletPath, str(self.numTopicBox.value()))
+                MalletCaller.main(malletPath, self.numTopicBox.value())
 
                 # Call FileFilter.py
                 print('GUI - FileFilter.py executing -- Please Wait.')
@@ -197,12 +198,12 @@ class Form(QWidget):
 
                 # Call TopicStocker.py
                 print('GUI - TopicStocker.py executing -- Please Wait.')
-                topics = TopicStocker.main(str(self.numTopicBox.value()))
+                topics = TopicStocker.main(self.numTopicBox.value())
 
                 # Call the VisualModeler.py
                 print('GUI - VisualModeler.py executing -- Please Wait.')
                 VisualModel = VisualModeler()
-                graphType = self.graphTypeList.value()
+                graphType = self.graphTypeBox.currentText()
                     # Find the arrays of topics
                 enhTopics = topics.getEnhTopics()
                 bugTopics = topics.getBugTopics()
@@ -210,17 +211,17 @@ class Form(QWidget):
                 # 'All Enhancements', 'Dates of Enhancements'
                 # 'All Bugs', 'Multi Date View of Bug', 'Date Divided View of Bug'
 
-                if self.enhCheck.value():
+                if self.enhRadio.isChecked():
                     # Enhancements. one of: modelVolumeEnhView or modelDateView
                     if graphType == 'All Enhancements':
                         plot = VisualModel.modelVolumeEnhView(enhTopics)
                         print(plot)
 
                     elif graphType == 'Dates of Enhancements':
-                        #When the user specifies the enhancement they want, pass that topic to the modeler
+                        # When the user specifies the enhancement they want, pass that topic to the modeler
                         pass
 
-                elif self.bugCheck.value():
+                elif self.bugRadio.isChecked():
                     # Bugs. one of: modelVolumeBugView, modelMultiDateView, modelDividedView
                     if graphType == 'All Bugs':
                         plot = VisualModel.modelVolumeEnhView(bugTopics)
