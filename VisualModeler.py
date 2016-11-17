@@ -39,7 +39,7 @@ class VisualModeler:
         for topic in enhTopics:
             countSum = 0
             datesAndCounts = topic.getDatesAndCounts()
-            for key, value in datesAndCounts:
+            for key, value in datesAndCounts.items():
                 countSum += value
             topics.append(topicNum)
             counts.append(countSum)
@@ -55,7 +55,7 @@ class VisualModeler:
         datesAndCounts = enhTopic.getDatesAndCounts()
         dates = []
         counts = []
-        for key, value in datesAndCounts:
+        for key, value in datesAndCounts.items():
             dates.append(key)
             counts.append(value)
 
@@ -74,7 +74,7 @@ class VisualModeler:
                 countSum = 0
                 datesAndCounts = topic.getDatesAndCounts(severity)
                 severities[severity] = []
-                for key, value in datesAndCounts:
+                for key, value in datesAndCounts.items():
                     countSum += value
                 topics.append(topicNum)
                 severities[severity].append(countSum)
@@ -95,7 +95,7 @@ class VisualModeler:
 
         sevNum = 0
         for severity in severityDatesAndCounts:
-            for key, value in severityDatesAndCounts[severity]:
+            for key, value in severityDatesAndCounts[severity].items():
                 dates.append(key)
                 counts.append(value)
                 sevs.append(str(sevNum))
@@ -113,7 +113,7 @@ class VisualModeler:
         for severity in range(6):
             countSum = 0
             datesAndCounts = bugTopic.getDatesAndCounts(severity)
-            for key, value in datesAndCounts:
+            for key, value in datesAndCounts.items():
                 countSum += value
             severities.append(severity)
             counts.append(countSum)
