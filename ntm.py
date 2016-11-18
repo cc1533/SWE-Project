@@ -9,16 +9,10 @@
 #
 #####################################################################################################
 #  TODO:
-#       0.  Fix MalletCaller.py to process mallet correctly... (my bad)
-#               - It processes mallet to completion but for some reason disregards the # of topics
-#       1.  Display models
-#               - Figure out how to send radio button states as arguments to modeler
-#               - Send radio button states, # of topics and type of model to modeler?
-#               - Figure out how to display the model in the GUI
-#                   -- A new image widget?
-#       2.  Testing on Windows / Linux
-#               - Everything works on Linux up to displaying the models but that has not been implemented yet.
-#       3.  Non-Functional Requirements
+#       1.  Get VisualModeler calls working for all model options
+#       2.  Add Widgets that allows users to see and specify which topics they want to see in the models
+#       3.  Testing platforms - I'll be testing on linux as I go but Windows needs to be tested periodically
+#       4.  Non-Functional Requirements
 #               - Clean up code, unify formatting across all modules
 #               - GUI changes to make it more intuitive, simplified?
 #               - Add some kind of progress bar or loading spinner when other modules are processing
