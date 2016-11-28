@@ -92,6 +92,7 @@ class Form(QWidget):
         self.numTopicBox.setRange(1, 20)  # Arbitrarily picked 20, idk what the max should be
         self.numTopicBox.setToolTip('Number of topics to be displayed (10 by default).')
         self.numTopicBox.setValue(10)
+        # todo: add function to handle change in number of topics
 
         # Add # of topics box
         hNumTopicBox.addWidget(numTopicLabel)
@@ -125,11 +126,12 @@ class Form(QWidget):
 
         # Create check boxes, these will be used later
         self.enhRadio = QRadioButton('View Enhancements')
-        self.enhRadio.setChecked(False)
+        self.enhRadio.setChecked(True)
         self.enhRadio.setToolTip('Show Enhancements?')
         self.bugRadio = QRadioButton('View Bugs')
         self.bugRadio.setChecked(False)
         self.bugRadio.setToolTip('Show Bugs?')
+        # todo: add function to handle what type of graph is displayed or remove radio buttons and only depend on typebox
 
         # Add checkboxes and other widgets to window
         hRadioBox.addWidget(self.enhRadio)
@@ -141,9 +143,20 @@ class Form(QWidget):
         graphTypeList = ['All Enhancements', 'Dates of Enhancements', 'All Bugs', 'Multi Date View of Bug', 'Date Divided View of Bug']
         self.graphTypeBox.insertItems(0, graphTypeList)
         self.graphTypeBox.setToolTip('Choose what kind of graph the data should be displayed as.')
+        # todo: add function to activate topic number
 
         # Add graphTypeBox to window
         vertBox.addWidget(self.graphTypeBox)
+
+        self.graphTopicBox = QComboBox()
+        graphTopicList = []
+        for num in range(1, 11):
+            graphTopicList.append("Topic " + str(num))
+        self.graphTopicBox.insertItems(0, graphTopicList)
+        self.graphTopicBox.setToolTip('Choose which topic for graph')
+        self.graphTopicBox.setEnabled(False)
+
+        vertBox.addWidget(self.graphTopicBox)
 
         mainLayout = QGridLayout()
         mainLayout.addLayout(vertBox, 0, 1)
@@ -202,7 +215,7 @@ class Form(QWidget):
 
                 # Call the VisualModeler.py
                 print('GUI - VisualModeler.py executing -- Please Wait.')
-                VisualModel = VisualModeler()
+                VisualModel = VisualModeler.VisualModeler()
                 graphType = self.graphTypeBox.currentText()
                     # Find the arrays of topics
                 enhTopics = topics.getEnhTopics()
@@ -219,7 +232,9 @@ class Form(QWidget):
 
                     elif graphType == 'Dates of Enhancements':
                         # When the user specifies the enhancement they want, pass that topic to the modeler
-                        pass
+                        enhTopic = enhTopics[self.graphTopicBox.currentIndex()]
+                        plot = VisualModel.modelDateView(enhTopic)
+                        print(plot)
 
                 elif self.bugRadio.isChecked():
                     # Bugs. one of: modelVolumeBugView, modelMultiDateView, modelDividedView
@@ -229,11 +244,15 @@ class Form(QWidget):
 
                     elif graphType == 'Multi Date View of Bug':
                         # When the user specifies the bug they want, pass that topic to the modeler
-                        pass
+                        bugTopic = bugTopics[self.graphTopicBox.currentIndex()]
+                        plot = VisualModel.modelVolumeEnhView(bugTopic)
+                        print(plot)
 
                     elif graphType == 'Date Divided View of Bug':
                         # When the user specifies the bug they want, pass that topic to the modeler
-                        pass
+                        bugTopic = bugTopics[self.graphTopicBox.currentIndex()]
+                        plot = VisualModel.modelVolumeEnhView(bugTopic)
+                        print(plot)
 
                 print('GUI - All modules done processing.')
                 QMessageBox.information(self, 'Processing Completed', 'Modules have finished processing.')
