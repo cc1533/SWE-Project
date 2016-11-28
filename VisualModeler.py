@@ -35,7 +35,7 @@ class VisualModeler:
     def modelVolumeEnhView(enhTopics):
         counts = []
         topics = []
-        topicNum = 0
+        topicNum = 1
         for topic in enhTopics:
             countSum = 0
             datesAndCounts = topic.getDatesAndCounts()
@@ -47,7 +47,11 @@ class VisualModeler:
 
         dF = DataFrame(data={'topics': topics, 'counts': counts})
 
-        plot = ggplot(dF, aes(x='topics', weight='counts')) + geom_bar()
+        plot = ggplot(dF, aes(x='topics', weight='counts')) + \
+               geom_bar() + \
+               ggtitle("Total Counts for each Topic") + \
+               xlab("Topics") + \
+               ylab("Total Count")
         return plot
 
     @staticmethod
@@ -61,14 +65,18 @@ class VisualModeler:
 
         formattedDates = to_datetime(Series(dates))
         dF = DataFrame(data={'dates': formattedDates, 'reports': counts})
-        plot = ggplot(dF, aes(x='dates', y='reports')) + geom_line()
+        plot = ggplot(dF, aes(x='dates', y='reports')) + \
+               geom_line() + \
+               ggtitle("Total Counts By Date For Topic") + \
+               xlab("Date") + \
+               ylab("Total Count")
         return plot
 
     @staticmethod
     def modelVolumeBugView(bugTopics):
         topics = []
         severities = []
-        topicNum = 0
+        topicNum = 1
         for topic in bugTopics:
             for severity in range(6):
                 countSum = 0
@@ -76,7 +84,7 @@ class VisualModeler:
                 severities[severity] = []
                 for key, value in datesAndCounts.items():
                     countSum += value
-                topics.append(topicNum)
+                topics.append("Topic " + str(topicNum))
                 severities[severity].append(countSum)
 
         dF = DataFrame(data={'topics': topics, 's0': severities[0], 's1': severities[1], 's2': severities[2], 's3': severities[3], 's4': severities[4], 's5': severities[5]})
