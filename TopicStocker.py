@@ -112,7 +112,9 @@ class TopicStocker():
                 keyword = keys[keyline].split()[4] + keys[keyline].split()[5]
                 topic = int(keys[keyline].split()[6])
 
-            date = datesTypes[dateTypeLine].split('\t')[3]
+            dateTemp = datesTypes[dateTypeLine].split('\t')[3]
+
+            date = dateTemp[:(dateTemp.rfind('-'))]
             category = datesTypes[dateTypeLine].split('\t')[2]
             
             if (category == "enhancement"):
