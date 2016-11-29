@@ -9,26 +9,12 @@
 #
 #####################################################################################################
 #  TODO:
-#       1.  Display models
-#               - Figure out how to send radio button states as arguments to modeler
-#               - Send radio button states, # of topics and type of model to modeler?
-#               - Figure out how to display the model in the GUI
-#                   -- A new image widget?
-#       2.  Testing on Windows / Linux
-#               - Everything works on Linux up to displaying the models but that has not been implemented yet.
-#       3.  Non-Functional Requirements
-#               - Clean up code, unify formatting across all modules
-#               - GUI changes to make it more intuitive, simplified?
-#               - Add some kind of progress bar or loading spinner when other modules are processing
-#                   -- There are notifications when the processes are done but not during processing
-#                   -- It would just be "nicer" as a user to tell that stuff is happening in the program
-#               - Any reason for us to have a menu bar?  How would it be used?  How would it make user's lives easier?
-#               - Security issues:
-#                   -- [None, at the moment]
-#               - Performance Testing:
-#                   -- Performance while idle
-#                   -- Performance while processing
-#                   -- Performance while the final model is displayed
+#       Functional:
+#	1.  Have all functional requirements been implemented?
+#
+#	Non-Functional:
+#	1.  Testing on Windows/Linux, whomever has all of the python libraries installed
+#	2.  Add Session functionality via menubar options
 #
 #####################################################################################################
 #  Program info:
@@ -159,6 +145,16 @@ class MainWindow(QMainWindow):
 		self.graphTypeBox.setToolTip('Choose what kind of graph the data should be displayed as.')
 			# Add graphTypeBox to window
 		vertBox.addWidget(self.graphTypeBox)
+
+		# Create Topic box
+		self.graphTopicBox = QComboBox()
+		graphTopicList = []
+		for num in range(1, 11):
+			graphTopicList.append("Topic " + str(num))
+		self.graphTopicBox.insertItems(0, graphTopicList)
+		self.graphTopicBox.setToolTip('Choose which topic for graph')
+		self.graphTopicBox.setEnabled(False)
+		#vertBox.addWidget(self.graphTopicBox)	# Since this box doesn't do anything yet, just don't add it to the window
 		
 		# Add seperate button to display models
 		self.displayModelButton = QPushButton('Display Model')
@@ -185,25 +181,21 @@ class MainWindow(QMainWindow):
 		print('GUI - Testing Mallet Path...')
 		# checks for valid mallet path first
 		if malletPath == '':
-			QMessageBox.information(self, 'Error',
-									'No path found.  Please enter the Mallet Program.')
+			QMessageBox.information(self, 'Error', 'No path found.  Please enter the Mallet Program.')
 			return
 		elif 'mallet' not in malletPath:
-			QMessageBox.information(self, 'Error',
-									'Mallet not found in path.  Please enter the Mallet Program.')
+			QMessageBox.information(self, 'Error', 'Mallet not found in path.  Please enter the Mallet Program.')
 			return
 		else:
 			print('GUI - Valid mallet path found, testing input file path.')
 
 			# if the mallet path is valid, check input file path
 			if inputFilePath == '':
-				QMessageBox.information(self, 'Error',
-										'No path found.  Please enter the input file path.')
+				QMessageBox.information(self, 'Error', 'No path found.  Please enter the input file path.')
 				return
 
 			elif '.xls' not in inputFilePath and '.xlsx' not in inputFilePath:
-				QMessageBox.information(self, 'Error',
-										'Valid Excel File not found.  Please enter a valid input file.')
+				QMessageBox.information(self, 'Error', 'Valid Excel File not found.  Please enter a valid input file.')
 				return
 
 			else:
@@ -235,13 +227,8 @@ class MainWindow(QMainWindow):
 		inputLen -= 2								# get rid of the last two characters ',
 		inputFile = fname1[0][2:inputLen]			# strip off the first two characters ('
 
-		# These print statements show exactly what the problem was and how it was progressively resolved
-		# print(str(fname))
-		# print(fname1[0])
-		# print(inputfile)
-
 		print('GUI - Testing:  ' + inputFile)
-		# Is the input the mallet path or the input file path?
+		# Test to see if what the user gave as input was for the mallet program or the excel file
 		if 'Mallet' in inputFile or 'mallet' in inputFile:
 			print('GUI - Mallet input path detected, setting Mallet line.')
 			self.malletLine.setText(inputFile)
@@ -263,7 +250,7 @@ class MainWindow(QMainWindow):
 
 		# Call the VisualModeler.py
 		print('GUI - VisualModeler.py executing -- Please Wait.')
-		VisualModel = VisualModeler()
+		VisualModel = VisualModeler.VisualModeler()
 		graphType = self.graphTypeBox.currentText()
 		# Find the arrays of topics
 		enhTopics = topics.getEnhTopics()
@@ -280,21 +267,27 @@ class MainWindow(QMainWindow):
 
 			elif graphType == 'Dates of Enhancements':
 				# When the user specifies the enhancement they want, pass that topic to the modeler
-				pass
+				enhTopic = enhTopics[self.graphTopicBox.currentIndex()]
+				plot = VisualModel.modelDateView(enhTopic)
+				print(plot)
 
 		elif self.bugRadio.isChecked():
 			# Bugs. one of: modelVolumeBugView, modelMultiDateView, modelDividedView
 			if graphType == 'All Bugs':
-				plot = VisualModel.modelVolumeEnhView(bugTopics)
+				plot = VisualModel.modelVolumeBugView(bugTopics)
 				print(plot)
 
 			elif graphType == 'Multi Date View of Bug':
 				# When the user specifies the bug they want, pass that topic to the modeler
-				pass
+				bugTopic = bugTopics[self.graphTopicBox.currentIndex()]
+				plot = VisualModel.modelMultiDateView(bugTopic)
+				print(plot)
 
 			elif graphType == 'Date Divided View of Bug':
 				# When the user specifies the bug they want, pass that topic to the modeler
-				pass
+				bugTopic = bugTopics[self.graphTopicBox.currentIndex()]
+				plot = VisualModel.modelDividedView(bugTopic)
+				print(plot)
 
 	# placeholders for what would've been the code to add function to the menubar options
 	'''
@@ -316,10 +309,10 @@ def main():
 # code below looks for inputdirectory in the program path location, if it is not found, the program makes one
 ipDir = 'inputdirectory'
 if not os.path.exists(ipDir):
-    print('GUI - No Input Directory Found, Creating Input Directory')
-    os.makedirs(ipDir)      # Chris:  I'm pretty sure this will work just fine on Windows as well
+	print('GUI - No Input Directory Found, Creating Input Directory')
+	os.makedirs(ipDir)
 else:
-    print('GUI - Input Directory Found.')
+	print('GUI - Input Directory Found.')
 
 if __name__ == '__main__':
 	main()
