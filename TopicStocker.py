@@ -123,31 +123,36 @@ class TopicStocker():
                     self.__enhWords[topic].append(keyword)
 
             else:
-                self.__bugTopics[topic].incDateCount(category, date)
-
                 if (category == "trivial"):
                     if (keyword not in self.__bugWords[topic][0]):
                         self.__bugWords[topic][0].append(keyword)
-                        
+                    self.__bugTopics[topic].incDateCount(category, date)
+
+
                 elif (category == "minor"):
                     if (keyword not in self.__bugWords[topic][1]):
                         self.__bugWords[topic][1].append(keyword)
-                        
+                    self.__bugTopics[topic].incDateCount(category, date)
+
                 elif (category == "normal"):
                     if (keyword not in self.__bugWords[topic][2]):
                         self.__bugWords[topic][2].append(keyword)
-                        
+                    self.__bugTopics[topic].incDateCount(category, date)
+
                 elif (category == "major"):
                     if (keyword not in self.__bugWords[topic][3]):
                         self.__bugWords[topic][3].append(keyword)
-                        
+                    self.__bugTopics[topic].incDateCount(category, date)
+
                 elif (category == "critical"):
                     if (keyword not in self.__bugWords[topic][4]):
                         self.__bugWords[topic][4].append(keyword)
-                        
+                    self.__bugTopics[topic].incDateCount(category, date)
+
                 elif (category == "blocker"):
                     if (keyword not in self.__bugWords[topic][5]):
                         self.__bugWords[topic][5].append(keyword)
+                    self.__bugTopics[topic].incDateCount(category, date)
 
             keyIndex += 1
             keyline += 1

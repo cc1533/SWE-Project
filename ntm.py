@@ -239,19 +239,19 @@ class Form(QWidget):
                 elif self.bugRadio.isChecked():
                     # Bugs. one of: modelVolumeBugView, modelMultiDateView, modelDividedView
                     if graphType == 'All Bugs':
-                        plot = VisualModel.modelVolumeEnhView(bugTopics)
+                        plot = VisualModel.modelVolumeBugView(bugTopics)
                         print(plot)
 
                     elif graphType == 'Multi Date View of Bug':
                         # When the user specifies the bug they want, pass that topic to the modeler
                         bugTopic = bugTopics[self.graphTopicBox.currentIndex()]
-                        plot = VisualModel.modelVolumeEnhView(bugTopic)
+                        plot = VisualModel.modelMultiDateView(bugTopic)
                         print(plot)
 
                     elif graphType == 'Date Divided View of Bug':
                         # When the user specifies the bug they want, pass that topic to the modeler
                         bugTopic = bugTopics[self.graphTopicBox.currentIndex()]
-                        plot = VisualModel.modelVolumeEnhView(bugTopic)
+                        plot = VisualModel.modelDividedView(bugTopic)
                         print(plot)
 
                 print('GUI - All modules done processing.')
