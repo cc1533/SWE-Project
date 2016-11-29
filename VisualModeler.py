@@ -75,58 +75,70 @@ class VisualModeler:
     @staticmethod
     def modelVolumeBugView(bugTopics):
         topics = []
-        severities = []
+        severities = [[], [], [], [], [], []]
         topicNum = 1
+        severity = ["trivial", "minor", "normal", "major", "critical", "blocker"]
         for topic in bugTopics:
-            for severity in range(6):
+            for severityNum in range(6):
                 countSum = 0
-                datesAndCounts = topic.getDatesAndCounts(severity)
-                severities[severity] = []
-                for key, value in datesAndCounts.items():
-                    countSum += value
-                topics.append("Topic " + str(topicNum))
-                severities[severity].append(countSum)
+                severityDates = topic.getDates(severity[severityNum])
+                for key in severityDates:
+                    countSum += topic.getDateCount(severity[severityNum], key)
+                severities[severityNum].append(countSum)
+            topics.append(topicNum)
+            topicNum += 1
 
-        dF = DataFrame(data={'topics': topics, 's0': severities[0], 's1': severities[1], 's2': severities[2], 's3': severities[3], 's4': severities[4], 's5': severities[5]})
+        dF = DataFrame(data={'topics': topics, 'trivial': severities[0], 'minor': severities[1], 'normal': severities[2], 'major': severities[3], 'critical': severities[4], 'blocker': severities[5]})
         data = melt(dF, id_vars='topics')
 
-        plot = ggplot(data, aes(x='topics', weight='value', fill='variable')) + geom_bar(stat='identity')
+        plot = ggplot(data, aes(x='topics', weight='value', fill='variable')) + \
+               geom_bar(stat='identity') + \
+               ggtitle("Total Counts By Severity For Topics") + \
+               xlab("Topics") + \
+               ylab("Counts")
         return plot
 
     @staticmethod
     def modelMultiDateView(bugTopic):
-        severityDatesAndCounts = bugTopic.getDatesAndCounts()
-
         sevs = []
         dates = []
         counts = []
-
-        sevNum = 0
-        for severity in severityDatesAndCounts:
-            for key, value in severityDatesAndCounts[severity].items():
+        severity = ["trivial", "minor", "normal", "major", "critical", "blocker"]
+        for severityNum in range(6):
+            severityDates = bugTopic.getDates(severity[severityNum])
+            for key in severityDates:
+                count = bugTopic.getDateCount(severity[severityNum], key)
                 dates.append(key)
-                counts.append(value)
-                sevs.append(str(sevNum))
-            sevNum += 1
+                counts.append(count)
+                sevs.append(severity[severityNum])
 
         formattedDates = to_datetime(Series(dates))
         dF = DataFrame(data={'dates': formattedDates, 'reports': counts, 'severity': sevs})
-        plot = ggplot(dF, aes(x='dates', y='reports', color='severity')) + geom_line()
+        plot = ggplot(dF, aes(x='dates', y='reports', color='severity')) + \
+               geom_line() + \
+               ggtitle("Total Counts By Date For Topic") + \
+               xlab("Date") + \
+               ylab("Total Count")
         return plot
 
     @staticmethod
     def modelDividedView(bugTopic):
         severities = []
         counts = []
-        for severity in range(6):
+        severity = ["trivial", "minor", "normal", "major", "critical", "blocker"]
+        for severityNum in range(6):
             countSum = 0
-            datesAndCounts = bugTopic.getDatesAndCounts(severity)
-            for key, value in datesAndCounts.items():
-                countSum += value
-            severities.append(severity)
+            dates = bugTopic.getDates(severity[severityNum])
+            for key in dates:
+                countSum += bugTopic.getDateCount(severity[severityNum], key)
+            severities.append(severity[severityNum])
             counts.append(countSum)
 
         dF = DataFrame(data={'severities': severities, 'counts': counts})
 
-        plot = ggplot(dF, aes(x='severities', weight='counts')) + geom_bar()
+        plot = ggplot(dF, aes(x='severities', weight='counts')) + \
+               geom_bar() + \
+               ggtitle("Total Counts By Severity For Topic") + \
+               xlab("Severity") + \
+               ylab("Total Count")
         return plot

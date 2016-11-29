@@ -75,5 +75,5 @@ class BugTopic:
         else:
             return 0
 
-    def getDatesAndCounts(self, severity):
+    def getDates(self, severity):
         return self.__bugDateCounts[severity].keys()
