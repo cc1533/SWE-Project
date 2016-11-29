@@ -313,5 +313,13 @@ def main():
 	gui = MainWindow()
 	sys.exit(app.exec_())
 
+# code below looks for inputdirectory in the program path location, if it is not found, the program makes one
+ipDir = 'inputdirectory'
+if not os.path.exists(ipDir):
+    print('GUI - No Input Directory Found, Creating Input Directory')
+    os.makedirs(ipDir)      # Chris:  I'm pretty sure this will work just fine on Windows as well
+else:
+    print('GUI - Input Directory Found.')
+
 if __name__ == '__main__':
 	main()
