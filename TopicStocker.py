@@ -41,6 +41,9 @@ class TopicStocker():
 
         self.__numTopics = 0
 
+        self.__TopWords = []
+        self.__TopTopicWords = []
+
     def getEnhTopics(self):
         
         return self.__enhTopics
@@ -48,6 +51,10 @@ class TopicStocker():
     def getBugTopics(self):
         
         return self.__bugTopics
+
+    def getTopTopicWords(self):
+
+        return self.__TopTopicWords
 
     def initializeTopics(self, numOfTopics):
 
@@ -59,6 +66,8 @@ class TopicStocker():
 
         self.__enhWords = [[] for x in range(int(self.__numTopics))]
         self.__bugWords = [[[] for x in range(6)] for x in range(int(self.__numTopics))]
+
+        self.__TopWords = [{} for x in range(int(self.__numTopics))]
 
     def stockTopics(self):
 
@@ -154,8 +163,30 @@ class TopicStocker():
                         self.__bugWords[topic][5].append(keyword)
                     self.__bugTopics[topic].incDateCount(category, date)
 
+            if (keyword not in self.__TopWords[topic]):
+                self.__TopWords[topic][keyword] = 1
+            else:
+                self.__TopWords[topic][keyword] += 1
+
             keyIndex += 1
             keyline += 1
+
+        tempTopWords = self.__TopWords
+        for x in range(int(self.__numTopics)):
+            while True:
+                maxWord = max(tempTopWords[x], key=lambda k: tempTopWords[x][k])
+                if maxWord in self.__TopTopicWords:
+                    tempTopWords[x].pop(maxWord)
+                else:
+                    lookAgain = False
+                    for word in self.__TopTopicWords:
+                        if maxWord in word or word in maxWord:
+                            tempTopWords[x].pop(maxWord)
+                            lookAgain = True
+                    if not lookAgain:
+                        break
+
+            self.__TopTopicWords.append(maxWord)
 
 
         # this section sets the wordlist for each topic/severity etc...

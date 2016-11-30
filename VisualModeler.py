@@ -32,16 +32,16 @@ from Topics import *
 class VisualModeler:
 
     @staticmethod
-    def modelVolumeEnhView(enhTopics):
+    def modelVolumeEnhView(enhTopics, topicWordList):
         counts = []
         topics = []
-        topicNum = 1
+        topicNum = 0
         for topic in enhTopics:
             countSum = 0
             datesAndCounts = topic.getDatesAndCounts()
             for key, value in datesAndCounts.items():
                 countSum += value
-            topics.append(topicNum)
+            topics.append(topicWordList[topicNum])
             counts.append(countSum)
             topicNum += 1
 
@@ -55,7 +55,7 @@ class VisualModeler:
         return plot
 
     @staticmethod
-    def modelDateView(enhTopic):
+    def modelDateView(enhTopic, topicWord):
         datesAndCounts = enhTopic.getDatesAndCounts()
         dates = []
         counts = []
@@ -67,16 +67,16 @@ class VisualModeler:
         dF = DataFrame(data={'dates': formattedDates, 'reports': counts})
         plot = ggplot(dF, aes(x='dates', y='reports')) + \
                geom_line() + \
-               ggtitle("Total Counts By Date For Topic") + \
+               ggtitle("Total Counts By Date For " + topicWord) + \
                xlab("Date") + \
                ylab("Total Count")
         return plot
 
     @staticmethod
-    def modelVolumeBugView(bugTopics):
+    def modelVolumeBugView(bugTopics, topicWordList):
         topics = []
         severities = [[], [], [], [], [], []]
-        topicNum = 1
+        topicNum = 0
         severity = ["trivial", "minor", "normal", "major", "critical", "blocker"]
         for topic in bugTopics:
             for severityNum in range(6):
@@ -85,7 +85,7 @@ class VisualModeler:
                 for key in severityDates:
                     countSum += topic.getDateCount(severity[severityNum], key)
                 severities[severityNum].append(countSum)
-            topics.append(topicNum)
+            topics.append(topicWordList[topicNum])
             topicNum += 1
 
         dF = DataFrame(data={'topics': topics, 'trivial': severities[0], 'minor': severities[1], 'normal': severities[2], 'major': severities[3], 'critical': severities[4], 'blocker': severities[5]})
@@ -99,7 +99,7 @@ class VisualModeler:
         return plot
 
     @staticmethod
-    def modelMultiDateView(bugTopic):
+    def modelMultiDateView(bugTopic, topicWord):
         sevs = []
         dates = []
         counts = []
@@ -116,13 +116,13 @@ class VisualModeler:
         dF = DataFrame(data={'dates': formattedDates, 'reports': counts, 'severity': sevs})
         plot = ggplot(dF, aes(x='dates', y='reports', color='severity')) + \
                geom_line() + \
-               ggtitle("Total Counts By Date For Topic") + \
+               ggtitle("Total Counts By Date For " + topicWord) + \
                xlab("Date") + \
                ylab("Total Count")
         return plot
 
     @staticmethod
-    def modelDividedView(bugTopic):
+    def modelDividedView(bugTopic, topicWord):
         severities = []
         counts = []
         severity = ["trivial", "minor", "normal", "major", "critical", "blocker"]
@@ -138,7 +138,7 @@ class VisualModeler:
 
         plot = ggplot(dF, aes(x='severities', weight='counts')) + \
                geom_bar() + \
-               ggtitle("Total Counts By Severity For Topic") + \
+               ggtitle("Total Counts By Severity For " + topicWord) + \
                xlab("Severity") + \
                ylab("Total Count")
         return plot

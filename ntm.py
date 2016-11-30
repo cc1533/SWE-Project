@@ -40,6 +40,7 @@ class MainWindow(QMainWindow):
     def __init__(self):
         super(MainWindow, self).__init__()
         self.initUI()
+        self.__topics = None
 
     def initUI(self):
         # setGeometry(self, ax, ay, aw, ah) -> x, y, width, height
@@ -52,7 +53,7 @@ class MainWindow(QMainWindow):
         hInputBox = QHBoxLayout()
         hNumTopicBox = QHBoxLayout()
         hMalletBox = QHBoxLayout()
-        hRadioBox = QHBoxLayout()
+        hTopicBox = QHBoxLayout()
 
         # Create menu bar actions (not the bar itself yet)
         openAction = QAction('Open', self)
@@ -99,7 +100,7 @@ class MainWindow(QMainWindow):
         self.numTopicBox.setRange(1, 10)  # Arbitrarily picked 20, idk what the max should be
         self.numTopicBox.setToolTip('Number of topics to be displayed (5 by default).')
         self.numTopicBox.setValue(defaultNumTopics)
-        self.numTopicBox.valueChanged.connect(self.updateTopicBox)
+        self.numTopicBox.valueChanged.connect(self.disableDisplayModel)
         # Add # of topics box
         hNumTopicBox.addWidget(numTopicLabel)
         hNumTopicBox.addWidget(self.numTopicBox)
@@ -142,6 +143,7 @@ class MainWindow(QMainWindow):
         vertBox.addLayout(hRadioBox)
         """
         # Looking for some widget to use to change model types
+        modelLabel = QLabel("Pick a Model:")
         self.graphTypeBox = QComboBox()
         graphTypeList = ['All Enhancements', 'Dates of Enhancements', 'All Bugs', 'Multi Date View of Bug', 'Date Divided View of Bug']
         self.graphTypeBox.insertItems(0, graphTypeList)
@@ -149,9 +151,11 @@ class MainWindow(QMainWindow):
         self.graphTypeBox.currentIndexChanged.connect(self.enableTopicBox)
 
         # Add graphTypeBox to window
+        vertBox.addWidget(modelLabel)
         vertBox.addWidget(self.graphTypeBox)
 
         # Create Topic box
+        topicLabel = QLabel("Topics: ")
         self.graphTopicBox = QComboBox()
         graphTopicList = []
         for num in range(1, defaultNumTopics+1):
@@ -159,7 +163,10 @@ class MainWindow(QMainWindow):
         self.graphTopicBox.insertItems(0, graphTopicList)
         self.graphTopicBox.setToolTip('Choose which topic for graph')
         self.graphTopicBox.setEnabled(False)
-        vertBox.addWidget(self.graphTopicBox)
+
+        hTopicBox.addWidget(topicLabel)
+        hTopicBox.addWidget(self.graphTopicBox, 1)
+        vertBox.addLayout(hTopicBox)
 
         # Add seperate button to display models
         self.displayModelButton = QPushButton('Display Model')
@@ -187,16 +194,17 @@ class MainWindow(QMainWindow):
 
     def updateTopicBox(self):
         try:
-            numOfTopics = self.numTopicBox.value()
-            graphTopicList = []
-            for num in range(1, numOfTopics + 1):
-                graphTopicList.append("Topic " + str(num))
             self.graphTopicBox.clear()
-            self.graphTopicBox.insertItems(0, graphTopicList)
+            self.graphTopicBox.insertItems(0, self.__topics.getTopTopicWords())
             self.displayModelButton.setEnabled(False)
         except Exception:
             pass
 
+    def disableDisplayModel(self):
+        try:
+            self.displayModelButton.setEnabled(False)
+        except Exception:
+            pass
 
     def exeqt(self):		# "exeqt" = "execute", a pun because we're using PyQt (Py-cute)
         print('GUI - Run button pressed.')
@@ -239,8 +247,14 @@ class MainWindow(QMainWindow):
                 print('GUI - FileFilter.py executing -- Please Wait.')
                 FileFilter.main()
 
+                # Call TopicStocker.py
+                print('GUI - TopicStocker.py executing -- Please Wait.')
+                self.__topics = TopicStocker.main(self.numTopicBox.value())
+                self.updateTopicBox()
+
                 print('GUI - All Mallet modules done processing.')
                 QMessageBox.information(self, 'Processing Completed', 'Mallet modules have finished processing.')
+
                 self.displayModelButton.setEnabled(True)
 
     def fileSearch(self):
@@ -270,45 +284,44 @@ class MainWindow(QMainWindow):
             return
 
     def displayModels(self):
-        # Call TopicStocker.py
-        print('GUI - TopicStocker.py executing -- Please Wait.')
-        topics = TopicStocker.main(self.numTopicBox.value())
-
         # Call the VisualModeler.py
         print('GUI - VisualModeler.py executing -- Please Wait.')
         VisualModel = VisualModeler.VisualModeler()
         graphType = self.graphTypeBox.currentText()
         # Find the arrays of topics
-        enhTopics = topics.getEnhTopics()
-        bugTopics = topics.getBugTopics()
+        enhTopics = self.__topics.getEnhTopics()
+        bugTopics = self.__topics.getBugTopics()
 
         # 'All Enhancements', 'Dates of Enhancements'
         # 'All Bugs', 'Multi Date View of Bug', 'Date Divided View of Bug'
 
+        topicWords = self.__topics.getTopTopicWords()
+        topicIndex = self.graphTopicBox.currentIndex()
+
         if graphType == 'All Enhancements':
-            plot = VisualModel.modelVolumeEnhView(enhTopics)
+            plot = VisualModel.modelVolumeEnhView(enhTopics, topicWords)
             print(plot)
 
         elif graphType == 'Dates of Enhancements':
             # When the user specifies the enhancement they want, pass that topic to the modeler
-            enhTopic = enhTopics[self.graphTopicBox.currentIndex()]
-            plot = VisualModel.modelDateView(enhTopic)
+            enhTopic = enhTopics[topicIndex]
+            plot = VisualModel.modelDateView(enhTopic, topicWords[topicIndex])
             print(plot)
 
         elif graphType == 'All Bugs':
-            plot = VisualModel.modelVolumeBugView(bugTopics)
+            plot = VisualModel.modelVolumeBugView(bugTopics, topicWords)
             print(plot)
 
         elif graphType == 'Multi Date View of Bug':
             # When the user specifies the bug they want, pass that topic to the modeler
-            bugTopic = bugTopics[self.graphTopicBox.currentIndex()]
-            plot = VisualModel.modelMultiDateView(bugTopic)
+            bugTopic = bugTopics[topicIndex]
+            plot = VisualModel.modelMultiDateView(bugTopic, topicWords[topicIndex])
             print(plot)
 
         elif graphType == 'Date Divided View of Bug':
             # When the user specifies the bug they want, pass that topic to the modeler
-            bugTopic = bugTopics[self.graphTopicBox.currentIndex()]
-            plot = VisualModel.modelDividedView(bugTopic)
+            bugTopic = bugTopics[topicIndex]
+            plot = VisualModel.modelDividedView(bugTopic, topicWords[topicIndex])
             print(plot)
 
         """
