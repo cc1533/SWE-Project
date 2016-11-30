@@ -18,6 +18,9 @@ For linux
     9) pip install sip
     10) pip install pyqt5
     11) install mallet
+        - use this guide http://programminghistorian.org/lessons/topic-modeling-and-mallet
+    12) python3 ntm.py
+        - use shell to run
 For Windows
     1) Install Anaconda 4.2.0 for python 3.5
         - Can be installed from https://www.continuum.io/downloads
@@ -26,3 +29,6 @@ For Windows
         - pip script if not in the environment path is located in Anaconda3\Scripts
     3) install mallet
         - use this guide http://programminghistorian.org/lessons/topic-modeling-and-mallet
+    12) python3 ntm.py
+        - use cmd terminal to run
+        - make sure to use the anaconda python 3.5 interpreter
